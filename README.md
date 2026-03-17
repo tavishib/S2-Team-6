@@ -121,4 +121,5 @@ This demonstrates relationships and ensures the system behaves as expected.
 * Dashboard-style homepage
 * Study group search interface
 * Group creation navigation
-* Responsive UI design
+* Login & signup for authentication
+* Simple & responsive UI design
