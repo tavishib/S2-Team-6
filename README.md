@@ -67,13 +67,15 @@ The StudyMatch database is designed using a relational model and includes the fo
 
 ```
 StudyMatch/
-├── index.jsp
-├── css/
+├── index.jsp                # Homepage (JSP)
+├── css/                     # Stylesheets
 │   └── styles.css
-├── js/
+├── js/                      # JavaScript files
 │   └── main.js
-├── database/
+├── database/                # Database scripts
 │   └── schema.sql
+├── WEB-INF/                 # Web configuration (not publicly accessible)
+│   └── web.xml
 └── README.md
 ```
 
