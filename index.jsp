@@ -74,8 +74,9 @@
                         <label for="meetingType">Meeting type</label>
                         <select id="meetingType" class="sm-select" name="meetingType">
                             <option value="">Any</option>
-                            <option value="remote">Remote</option>
-                            <option value="in-person">In‑person</option>
+                            <option value="Online">Online</option>
+                            <option value="In-Person">In‑Person</option>
+                            <option value="Hybrid">Hybrid</option>
                         </select>
                     </div>
 
