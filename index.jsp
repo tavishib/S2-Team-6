@@ -84,9 +84,9 @@
                         <label for="tag">Focus</label>
                         <select id="tag" class="sm-select" name="tag">
                             <option value="">Any</option>
-                            <option value="homework">Homework</option>
-                            <option value="exam prep">Exam prep</option>
-                            <option value="project">Project</option>
+                            <option value="Homework">Homework</option>
+                            <option value="Exam Prep">Exam Prep</option>
+                            <option value="Project">Project</option>
                         </select>
                     </div>
 
