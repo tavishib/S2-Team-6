@@ -67,7 +67,7 @@
                                class="sm-input"
                                type="text"
                                name="courseId"
-                               placeholder="e.g. CS101">
+                               placeholder="e.g. CS157A">
                     </div>
 
                     <div class="sm-field-group">
