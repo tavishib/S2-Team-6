@@ -76,12 +76,13 @@
                 <div class="sm-small-label">Dashboard</div>
                 <h1>Welcome back, <%= userName %>!</h1>
                 <p>Quickly find or create a study group for your courses.
-                   Keep everything organised in one simple place.</p>
+                   Keep everything organized in one simple place.</p>
 
                 <div class="sm-dashboard-actions">
                     <a href="#quick-search" class="sm-btn sm-btn-primary">Find a study group</a>
                     <a href="createGroup.jsp" class="sm-btn sm-btn-secondary">Create a study group</a>
-                </div>
+					<a href="createCourse.jsp" class="sm-btn sm-btn-secondary">Create a course</a>          
+				</div>
 
                 <div class="sm-quick-links">
                     <div class="sm-quick-link">

@@ -6,7 +6,7 @@ public class DBConnection {
 
     private static final String URL      = "jdbc:mysql://localhost:3306/StudyMatch";
     private static final String USER     = "root";
-    private static final String PASSWORD = "mysql@1234";
+    private static final String PASSWORD = "CS157A@sjsu";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
