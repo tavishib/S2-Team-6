@@ -4,3 +4,4 @@ CLAUDE.md
 .settings/
 bin/
 .DS_Store
+WebContent/WEB-INF/lib/mysql-connector-j-9.6.0.jar
