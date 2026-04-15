@@ -9,7 +9,6 @@
 
     String userName = (String) session.getAttribute("userName");
 
-    // 🔥 ADD THIS PART (POST HANDLING + DB LOGIC)
     if ("POST".equalsIgnoreCase(request.getMethod())) {
 
         int userId = (int) session.getAttribute("userId");
@@ -159,7 +158,7 @@
                 <li>Messages and replies you have posted</li>
             </ul>
 
-            <%-- Error message from servlet --%>
+            <%-- Error message from JSP logic --%>
             <% String error = (String) request.getAttribute("error");
                if (error != null) { %>
                 <div style="background:#fee2e2;color:#991b1b;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.875rem;margin-bottom:0.8rem;">

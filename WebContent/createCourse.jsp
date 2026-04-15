@@ -1,8 +1,38 @@
+<%@ page import="java.sql.*" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%
     if (session == null || session.getAttribute("userId") == null) {
         response.sendRedirect("login.jsp");
         return;
+    }
+
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+
+        String courseId = request.getParameter("course_id");
+        String deptName = request.getParameter("deptName");
+        String title = request.getParameter("title");
+        String term = request.getParameter("term");
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO Course (course_id, dept_name, title, term) VALUES (?, ?, ?, ?)"
+            );
+
+            ps.setString(1, courseId);
+            ps.setString(2, deptName);
+            ps.setString(3, title);
+            ps.setString(4, term);
+
+            ps.executeUpdate();
+
+            response.sendRedirect("dashboard.jsp");
+            return;
+
+        } catch (SQLException e) {
+            out.println("Error: " + e.getMessage());
+        }
     }
 %>
 <!DOCTYPE html>
@@ -34,7 +64,7 @@
             <h2 style="margin:0 0 0.4rem;">Create a course</h2>
             <p>Add a course to the StudyMatch system.</p>
 
-            <form action="CreateCourseServlet" method="post" style="display:flex;flex-direction:column;gap:0.75rem;">
+            <form method="post" style="display:flex;flex-direction:column;gap:0.75rem;">
 
                 <div class="sm-field-group">
                     <label for="course_id">Course ID</label>
