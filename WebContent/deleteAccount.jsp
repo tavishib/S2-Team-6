@@ -1,10 +1,123 @@
+<%@ page import="java.sql.*, java.util.*" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
 <%
     if (session == null || session.getAttribute("userId") == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+
     String userName = (String) session.getAttribute("userName");
+
+    // 🔥 ADD THIS PART (POST HANDLING + DB LOGIC)
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+
+        int userId = (int) session.getAttribute("userId");
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            List<Integer> ledGroups = new ArrayList<>();
+
+            String findGroups = "SELECT group_id FROM Study_Group WHERE leader_id = ?";
+            PreparedStatement ps = conn.prepareStatement(findGroups);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ledGroups.add(rs.getInt("group_id"));
+            }
+
+            conn.setAutoCommit(false);
+
+            try {
+
+                if (!ledGroups.isEmpty()) {
+
+                    StringBuilder placeholders = new StringBuilder();
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        if (i > 0) placeholders.append(",");
+                        placeholders.append("?");
+                    }
+
+                    ps = conn.prepareStatement(
+                        "DELETE FROM Reply WHERE message_id IN " +
+                        "(SELECT message_id FROM Message WHERE group_id IN (" + placeholders + "))"
+                    );
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        ps.setInt(i + 1, ledGroups.get(i));
+                    }
+                    ps.executeUpdate();
+
+                    ps = conn.prepareStatement("DELETE FROM Group_Tag WHERE group_id IN (" + placeholders + ")");
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        ps.setInt(i + 1, ledGroups.get(i));
+                    }
+                    ps.executeUpdate();
+
+                    ps = conn.prepareStatement("DELETE FROM Meeting_Schedule WHERE group_id IN (" + placeholders + ")");
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        ps.setInt(i + 1, ledGroups.get(i));
+                    }
+                    ps.executeUpdate();
+
+                    ps = conn.prepareStatement("DELETE FROM Message WHERE group_id IN (" + placeholders + ")");
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        ps.setInt(i + 1, ledGroups.get(i));
+                    }
+                    ps.executeUpdate();
+
+                    ps = conn.prepareStatement("DELETE FROM Membership WHERE group_id IN (" + placeholders + ")");
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        ps.setInt(i + 1, ledGroups.get(i));
+                    }
+                    ps.executeUpdate();
+
+                    ps = conn.prepareStatement("DELETE FROM Study_Group WHERE group_id IN (" + placeholders + ")");
+                    for (int i = 0; i < ledGroups.size(); i++) {
+                        ps.setInt(i + 1, ledGroups.get(i));
+                    }
+                    ps.executeUpdate();
+                }
+
+                ps = conn.prepareStatement("DELETE FROM Reply WHERE user_id = ?");
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+
+                ps = conn.prepareStatement("DELETE FROM Message WHERE user_id = ?");
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+
+                ps = conn.prepareStatement("DELETE FROM Membership WHERE user_id = ?");
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+
+                ps = conn.prepareStatement("DELETE FROM Student WHERE user_id = ?");
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+
+                ps = conn.prepareStatement("DELETE FROM Administrator WHERE user_id = ?");
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+
+                ps = conn.prepareStatement("DELETE FROM User WHERE user_id = ?");
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+
+                conn.commit();
+
+                session.invalidate();
+                response.sendRedirect("login.jsp?deleted=true");
+                return;
+
+            } catch (SQLException e) {
+                conn.rollback();
+                request.setAttribute("error", "Database error: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            request.setAttribute("error", "Database error: " + e.getMessage());
+        }
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +167,7 @@
                 </div>
             <% } %>
 
-            <form id="deleteForm" action="deleteAccount" method="post">
+            <form id="deleteForm" method="post">
                 <button type="button" id="deleteBtn"
                         class="sm-btn sm-full-width"
                         style="background:#dc2626;color:#fff;border:none;cursor:pointer;
