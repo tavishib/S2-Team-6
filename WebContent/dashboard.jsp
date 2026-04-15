@@ -53,7 +53,7 @@
                             min-width:180px;background:#fff;border:1px solid var(--sm-border,#e5e7eb);
                             border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);
                             overflow:hidden;z-index:100;">
-                    <a href="deleteAccount.jsp"
+                    <a href="deleteAccount"
                        style="display:block;padding:0.65rem 1rem;font-size:0.875rem;
                               color:#dc2626;text-decoration:none;font-weight:500;"
                        onmouseover="this.style.background='#fff1f1'"
