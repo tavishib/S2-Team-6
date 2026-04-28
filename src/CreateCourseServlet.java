@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-@WebServlet("/CreateCourseServlet")
 public class CreateCourseServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

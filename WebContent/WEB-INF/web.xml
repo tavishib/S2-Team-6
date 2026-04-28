@@ -36,6 +36,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>CreateCourseServlet</servlet-name>
+        <servlet-class>CreateCourseServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateCourseServlet</servlet-name>
+        <url-pattern>/createCourse</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>DeleteAccountServlet</servlet-name>
         <servlet-class>DeleteAccountServlet</servlet-class>
     </servlet>
@@ -43,6 +52,7 @@
         <servlet-name>DeleteAccountServlet</servlet-name>
         <url-pattern>/deleteAccount</url-pattern>
     </servlet-mapping>
+
 
     <session-config>
         <session-timeout>15</session-timeout>
