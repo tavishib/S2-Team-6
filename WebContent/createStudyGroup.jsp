@@ -2,7 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%
-    // Prevent caching (like dashboard)
+    // Prevent caching
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
     response.setDateHeader("Expires", 0);
@@ -15,68 +15,74 @@
 
     String userName = (String) session.getAttribute("userName");
 
-    // Handle form submission
     if ("POST".equalsIgnoreCase(request.getMethod())) {
 
         int userId = (int) session.getAttribute("userId");
 
-        String courseId   = request.getParameter("courseId");
-        String groupName  = request.getParameter("groupName");
-        String description= request.getParameter("description");
-        String modality   = request.getParameter("modality");
-        String status     = request.getParameter("status");
-        String location   = request.getParameter("location");
-        int maxCapacity   = Integer.parseInt(request.getParameter("maxCapacity"));
+        String courseId    = request.getParameter("courseId");
+        String groupName   = request.getParameter("groupName");
+        String description = request.getParameter("description");
+        String modality    = request.getParameter("modality");
+        String status      = request.getParameter("status");
+        String location    = request.getParameter("location");
+        int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));
 
-        try (Connection conn = DBConnection.getConnection()) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-            conn.setAutoCommit(false);
+            try (Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/StudyMatch",
+                    "root",
+                    "mysql@1234")) {
 
-            try {
-                // Insert group
-                PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO Study_Group (course_id, leader_id, group_name, description, modality, max_capacity, current_status, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
-                );
+                conn.setAutoCommit(false);
 
-                ps.setString(1, courseId);
-                ps.setInt(2, userId);
-                ps.setString(3, groupName);
-                ps.setString(4, description);
-                ps.setString(5, modality);
-                ps.setInt(6, maxCapacity);
-                ps.setString(7, status);
-                ps.setString(8, location);
+                try {
+                    // Insert group
+                    PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO Study_Group (course_id, leader_id, group_name, description, modality, max_capacity, current_status, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS
+                    );
 
-                ps.executeUpdate();
+                    ps.setString(1, courseId);
+                    ps.setInt(2, userId);
+                    ps.setString(3, groupName);
+                    ps.setString(4, description);
+                    ps.setString(5, modality);
+                    ps.setInt(6, maxCapacity);
+                    ps.setString(7, status);
+                    ps.setString(8, location);
 
-                // Get group_id
-                ResultSet rs = ps.getGeneratedKeys();
-                int groupId = 0;
-                if (rs.next()) {
-                    groupId = rs.getInt(1);
+                    ps.executeUpdate();
+
+                    // Get group_id
+                    ResultSet rs = ps.getGeneratedKeys();
+                    int groupId = 0;
+                    if (rs.next()) {
+                        groupId = rs.getInt(1);
+                    }
+
+                    // Add creator as leader/member
+                    ps = conn.prepareStatement(
+                        "INSERT INTO Membership (user_id, group_id, joined_at, membership_role, membership_status) VALUES (?, ?, NOW(), 'Leader', 'Active')"
+                    );
+
+                    ps.setInt(1, userId);
+                    ps.setInt(2, groupId);
+                    ps.executeUpdate();
+
+                    conn.commit();
+
+                    response.sendRedirect("dashboard.jsp");
+                    return;
+
+                } catch (SQLException e) {
+                    conn.rollback();
+                    request.setAttribute("error", "Database error: " + e.getMessage());
                 }
-
-                // Add creator as leader/member
-                ps = conn.prepareStatement(
-                    "INSERT INTO Membership (user_id, group_id, joined_at, membership_role, membership_status) VALUES (?, ?, NOW(), 'Leader', 'Active')"
-                );
-
-                ps.setInt(1, userId);
-                ps.setInt(2, groupId);
-                ps.executeUpdate();
-
-                conn.commit();
-
-                response.sendRedirect("dashboard.jsp");
-                return;
-
-            } catch (SQLException e) {
-                conn.rollback();
-                request.setAttribute("error", "Database error: " + e.getMessage());
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             request.setAttribute("error", "Database error: " + e.getMessage());
         }
     }
@@ -116,7 +122,6 @@
             <h2>Create a study group</h2>
             <p>Fill in the details to create a new study group.</p>
 
-            <%-- Error message --%>
             <% String error = (String) request.getAttribute("error");
                if (error != null) { %>
                 <div style="background:#fee2e2;color:#991b1b;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.875rem;margin-bottom:0.8rem;">
