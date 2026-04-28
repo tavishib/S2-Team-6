@@ -83,8 +83,8 @@
                    Keep everything organized in one simple place.</p>
 
                 <div class="sm-dashboard-actions">
-                    <a href="#quick-search" class="sm-btn sm-btn-primary">Find a study group</a>
-                    <a href="createGroup.jsp" class="sm-btn sm-btn-secondary">Create a study group</a>
+                    <a href="searchGroups.jsp" class="sm-btn sm-btn-primary">Find a study group</a>
+                    <a href="createStudyGroup.jsp" class="sm-btn sm-btn-secondary">Create a study group</a>
 					<a href="createCourse.jsp" class="sm-btn sm-btn-secondary">Create a course</a>
 					<a href="listCourses.jsp" class="sm-btn sm-btn-secondary">List courses</a>
 				</div>
@@ -110,7 +110,7 @@
                 <h2>Search study groups</h2>
                 <p>Filter by course, meeting type and focus.</p>
 
-                <form id="quickSearchForm" action="SearchGroups" method="get">
+                <form id="quickSearchForm" action="searchGroups.jsp" method="get">
                     <div class="sm-field-group">
                         <label for="courseId">Course ID</label>
                         <input id="courseId" class="sm-input" type="text" name="courseId"
@@ -119,7 +119,7 @@
 
                     <div class="sm-field-group">
                         <label for="meetingType">Meeting type</label>
-                        <select id="meetingType" class="sm-select" name="meetingType">
+                        <select id="meetingType" class="sm-select" name="modality">
                             <option value="">Any</option>
                             <option value="Online">Online</option>
                             <option value="In-Person">In‑Person</option>
