@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.sql.*" %>
 
 <%
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -8,6 +9,42 @@
     if (session == null || session.getAttribute("userId") == null) {
         response.sendRedirect("login.jsp");
         return;
+    }
+
+    String error = null;
+
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+        String courseId = request.getParameter("course_id");
+        String deptName = request.getParameter("deptName");
+        String title    = request.getParameter("title");
+        String term     = request.getParameter("term");
+
+        if (courseId == null || courseId.isBlank() || deptName == null || deptName.isBlank() ||
+            title == null || title.isBlank() || term == null || term.isBlank()) {
+            error = "All fields are required.";
+        } else {
+            Connection conn = null;
+            PreparedStatement ps = null;
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "mysql@1234");
+
+                ps = conn.prepareStatement("INSERT INTO Course (course_id, deptName, title, term) VALUES (?, ?, ?, ?)");
+                ps.setString(1, courseId.trim());
+                ps.setString(2, deptName.trim());
+                ps.setString(3, title.trim());
+                ps.setString(4, term.trim());
+                ps.executeUpdate();
+
+                response.sendRedirect("dashboard.jsp");
+                return;
+            } catch (Exception e) {
+                error = "Database error: " + e.getMessage();
+            } finally {
+                if (ps   != null) try { ps.close();   } catch (SQLException ignored) {}
+                if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
+            }
+        }
     }
 %>
 <!DOCTYPE html>
@@ -39,7 +76,13 @@
             <h2 style="margin:0 0 0.4rem;">Create a course</h2>
             <p>Add a course to the StudyMatch system.</p>
 
-            <form action="createCourse" method="post" style="display:flex;flex-direction:column;gap:0.75rem;">
+            <% if (error != null) { %>
+                <div style="background:#fee2e2;color:#991b1b;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.875rem;margin-bottom:0.8rem;">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form action="createCourse.jsp" method="post" style="display:flex;flex-direction:column;gap:0.75rem;">
 
                 <div class="sm-field-group">
                     <label for="course_id">Course ID</label>

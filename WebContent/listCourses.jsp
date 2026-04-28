@@ -35,7 +35,7 @@
         </a>
         <nav class="sm-nav">
             <a href="dashboard.jsp" class="sm-btn sm-btn-outline">Back to Dashboard</a>
-            <a href="logout" class="sm-btn sm-btn-outline">Log out</a>
+            <a href="logout.jsp" class="sm-btn sm-btn-outline">Log out</a>
         </nav>
     </div>
 </header>

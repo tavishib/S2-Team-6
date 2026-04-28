@@ -57,7 +57,7 @@
                             min-width:180px;background:#fff;border:1px solid var(--sm-border,#e5e7eb);
                             border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);
                             overflow:hidden;z-index:100;">
-                    <a href="deleteAccount"
+                    <a href="deleteAccount.jsp"
                        style="display:block;padding:0.65rem 1rem;font-size:0.875rem;
                               color:#dc2626;text-decoration:none;font-weight:500;"
                        onmouseover="this.style.background='#fff1f1'"
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <a href="logout" class="sm-btn sm-btn-outline">Log out</a>
+            <a href="logout.jsp" class="sm-btn sm-btn-outline">Log out</a>
         </nav>
     </div>
 </header>
@@ -188,7 +188,7 @@
     function resetTimer() {
         clearTimeout(inactivityTimer);
         inactivityTimer = setTimeout(() => {
-            window.location.href = "logout?timeout=true";
+            window.location.href = "logout.jsp?timeout=true";
         }, 900000);
     }
 
