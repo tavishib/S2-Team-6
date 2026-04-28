@@ -113,7 +113,12 @@
                     %>
                     <div class="sm-quick-link" style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
-                            <span><%= rs.getString("group_name") %></span>
+                            <a href="groupDetail.jsp?groupId=<%= rs.getInt("group_id") %>"
+                               style="color:var(--sm-text);text-decoration:none;font-weight:500;"
+                               onmouseover="this.style.color='var(--sm-primary)'"
+                               onmouseout="this.style.color='var(--sm-text)'">
+                                <%= rs.getString("group_name") %>
+                            </a>
                             <%= rs.getString("course_id") %> &bull; <%= role %>
                         </div>
                         <% if (!"Leader".equals(role)) { %>
