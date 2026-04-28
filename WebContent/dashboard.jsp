@@ -85,7 +85,8 @@
                 <div class="sm-dashboard-actions">
                     <a href="#quick-search" class="sm-btn sm-btn-primary">Find a study group</a>
                     <a href="createGroup.jsp" class="sm-btn sm-btn-secondary">Create a study group</a>
-					<a href="createCourse.jsp" class="sm-btn sm-btn-secondary">Create a course</a>          
+					<a href="createCourse.jsp" class="sm-btn sm-btn-secondary">Create a course</a>
+					<a href="listCourses.jsp" class="sm-btn sm-btn-secondary">List courses</a>
 				</div>
 
                 <div class="sm-quick-links">
