@@ -19,7 +19,7 @@
         Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "mysql@1234");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
             conn.setAutoCommit(false);
 
             // Delete replies on messages in groups this user leads

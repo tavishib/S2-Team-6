@@ -27,7 +27,7 @@
             PreparedStatement ps = null;
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "mysql@1234");
+                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
                 ps = conn.prepareStatement("INSERT INTO Course (course_id, deptName, title, term) VALUES (?, ?, ?, ?)");
                 ps.setString(1, courseId.trim());

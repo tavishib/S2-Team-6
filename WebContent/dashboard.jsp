@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+
 <%
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
@@ -90,19 +92,61 @@
 				</div>
 
                 <div class="sm-quick-links">
+    <%
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            int uId = (int) session.getAttribute("userId");
+            try (Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu")) {
+
+                PreparedStatement ps = conn.prepareStatement(
+                    "SELECT sg.group_id, sg.group_name, sg.course_id, m.membership_role " +
+                    "FROM Membership m JOIN Study_Group sg ON m.group_id = sg.group_id " +
+                    "WHERE m.user_id = ? AND m.membership_status = 'Active'");
+                ps.setInt(1, uId);
+                ResultSet rs = ps.executeQuery();
+
+                boolean any = false;
+                while (rs.next()) {
+                    any = true;
+                    String role = rs.getString("membership_role");
+                    %>
+                    <div class="sm-quick-link" style="display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <span><%= rs.getString("group_name") %></span>
+                            <%= rs.getString("course_id") %> &bull; <%= role %>
+                        </div>
+                        <% if (!"Leader".equals(role)) { %>
+                            <a href="leaveGroup.jsp?groupId=<%= rs.getInt("group_id") %>"
+                               class="sm-btn sm-btn-outline"
+                               style="font-size:0.8rem;padding:0.2rem 0.6rem;color:#dc2626;border-color:#dc2626;"
+                               onclick="return confirm('Leave this group?')">Leave</a>
+                        <% } else { %>
+                            <span style="font-size:0.75rem;color:var(--sm-text-muted);">Leader</span>
+                        <% } %>
+                    </div>
+                    <%
+                }
+                if (!any) { %>
                     <div class="sm-quick-link">
                         <span>My groups</span>
-                        Groups you've joined or created.
+                        You haven't joined any groups yet.
                     </div>
-                    <div class="sm-quick-link">
-                        <span>Upcoming sessions</span>
-                        See what's scheduled this week.
-                    </div>
-                    <div class="sm-quick-link">
-                        <span>Explore courses</span>
-                        Browse groups by course ID.
-                    </div>
-                </div>
+                <% }
+            }
+        } catch (Exception e) { %>
+            <div class="sm-quick-link" style="color:red;">Error loading groups: <%= e.getMessage() %></div>
+        <% } %>
+
+    <div class="sm-quick-link">
+        <span>Upcoming sessions</span>
+        See what's scheduled this week.
+    </div>
+    <div class="sm-quick-link">
+        <span>Explore courses</span>
+        Browse groups by course ID.
+    </div>
+</div>
             </div>
 
             <aside class="sm-dashboard-side sm-quick-card" id="quick-search">

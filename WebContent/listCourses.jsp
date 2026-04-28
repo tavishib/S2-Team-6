@@ -13,7 +13,7 @@
 
     String DB_URL  = "jdbc:mysql://localhost:3306/StudyMatch";
     String DB_USER = "root";
-    String DB_PASS = "mysql@1234";
+    String DB_PASS = "CS157A@sjsu";
 
     String message = null;
 %>

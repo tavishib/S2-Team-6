@@ -46,7 +46,7 @@
                 ResultSet rs = null;
                 try {
                     Class.forName("com.mysql.cj.jdbc.Driver");
-                    conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "mysql@1234");
+                    conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
                     // Check for duplicate email
                     ps = conn.prepareStatement("SELECT user_id FROM User WHERE email = ?");

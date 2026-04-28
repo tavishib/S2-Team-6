@@ -33,7 +33,7 @@
             try (Connection conn = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/StudyMatch",
                     "root",
-                    "mysql@1234")) {
+                    "CS157A@sjsu")) {
 
                 conn.setAutoCommit(false);
 
