@@ -228,6 +228,37 @@
                     </span>
                 </div>
 
+                <div class="sm-field-group">
+                    <label>Meeting Day</label>
+                    <select name="meetingDay" class="sm-select">
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+                    </select>
+                </div>
+
+                <div class="sm-field-group">
+                    <label>Start Time</label>
+                    <input type="time" name="startTime" class="sm-input">
+                </div>
+
+                <div class="sm-field-group">
+                    <label>End Time</label>
+                    <input type="time" name="endTime" class="sm-input">
+                </div>
+
+                <div class="sm-field-group">
+                    <label>Meeting Type</label>
+                    <select name="meetingType" class="sm-select">
+                        <option value="Online">Online</option>
+                        <option value="In-Person">In-Person</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="sm-btn sm-btn-primary sm-full-width">
                     Create Group
                 </button>
