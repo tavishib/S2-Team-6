@@ -180,46 +180,73 @@
     </div>
 
     <div class="sm-container" style="max-width:600px; margin-top:1rem;">
-        <div class="sm-dashboard-side sm-quick-card">
+        <div class="sm-dashboard-side sm-quick-card" style="padding:1rem 1.2rem;">
 
-            <h3>Results</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                <h3 style="margin:0;font-size:1rem;">Results</h3>
+                <% if (!results.isEmpty()) { %>
+                    <span style="font-size:0.78rem;color:var(--sm-text-muted);"><%= results.size() %> group<%= results.size() == 1 ? "" : "s" %></span>
+                <% } %>
+            </div>
+
+            <% if ("1".equals(request.getParameter("privateBlocked"))) { %>
+                <div style="background:#fff7ed;color:#92400e;border:1px solid #fed7aa;
+                            border-radius:8px;padding:0.55rem 0.8rem;font-size:0.85rem;margin-bottom:0.75rem;">
+                    That group is private. Join it first to view the details.
+                </div>
+            <% } %>
 
             <% String error = (String) request.getAttribute("error");
                if (error != null) { %>
-                <p style="color:red;"><%= error %></p>
+                <p style="color:red;font-size:0.85rem;margin:0;"><%= error %></p>
             <% } %>
 
             <% if (results.isEmpty()) { %>
-                <p>No groups found.</p>
+                <p style="color:var(--sm-text-muted);font-size:0.875rem;margin:0;">No groups found. Try adjusting your filters.</p>
             <% } else {
-                for (Map<String, String> g : results) { %>
-
-                <div style="border:1px solid #eee;padding:10px;border-radius:8px;margin:10px 0;">
-				    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
-				        <h4 style="margin:0;"><%= g.get("name") %></h4>
-				        <span style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
-				                     border-radius:99px;padding:0.15rem 0.6rem;font-size:0.75rem;
-				                     font-weight:600;letter-spacing:0.03em;white-space:nowrap;">
-				            Group #<%= g.get("groupId") %>
-				        </span>
-				        <% if ("Private".equals(g.get("status"))) { %>
-				            <span title="Private — passcode required" style="font-size:0.85rem;">🔒</span>
-				        <% } %>
-				    </div>
-				    <p>Course: <%= g.get("course") %></p>
-				    <p>Modality: <%= g.get("modality") %></p>
-				    <p>Location: <%= g.get("location") %></p>
-				    <p>Status: <%= g.get("status") %></p>
-				    <p>Capacity: <%= g.get("capacity") %></p>
-				    <% if (!"0 spots left".equals(g.get("capacity")) && !"Member".equals(g.get("memberStatus"))) { %>
-				        <a href="joinGroup.jsp?groupId=<%= g.get("groupId") %>" class="sm-btn sm-btn-primary">Join</a>
-				    <% } else if ("Member".equals(g.get("memberStatus"))) { %>
-				        <span style="color:green;">✓ Joined</span>
-				    <% } else { %>
-				        <span style="color:gray;">Full</span>
-				    <% } %>
-				</div>
-
+                for (Map<String, String> g : results) {
+                    boolean isFull   = "0 spots left".equals(g.get("capacity"));
+                    boolean isMember = "Member".equals(g.get("memberStatus"));
+                    boolean isPrivate = "Private".equals(g.get("status"));
+            %>
+                <div style="display:flex;align-items:center;justify-content:space-between;
+                            gap:0.75rem;padding:0.6rem 0;
+                            border-bottom:1px solid var(--sm-border,#e5e7eb);">
+                    <div style="min-width:0;flex:1;">
+                        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                            <a href="groupDetail.jsp?groupId=<%= g.get("groupId") %>"
+                               style="font-weight:600;font-size:0.92rem;color:var(--sm-text);
+                                      text-decoration:none;"
+                               onmouseover="this.style.color='var(--sm-primary)'"
+                               onmouseout="this.style.color='var(--sm-text)'">
+                                <%= g.get("name") %>
+                            </a>
+                            <span style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
+                                         border-radius:99px;padding:0.1rem 0.45rem;font-size:0.7rem;
+                                         font-weight:600;white-space:nowrap;">#<%= g.get("groupId") %></span>
+                            <% if (isPrivate) { %><span title="Passcode required" style="font-size:0.8rem;">🔒</span><% } %>
+                        </div>
+                        <div style="font-size:0.78rem;color:var(--sm-text-muted);margin-top:0.15rem;">
+                            <%= g.get("course") %>
+                            &nbsp;&middot;&nbsp;<%= g.get("modality") %>
+                            <% if (g.get("location") != null && !g.get("location").isEmpty()) { %>
+                                &nbsp;&middot;&nbsp;<%= g.get("location") %>
+                            <% } %>
+                            &nbsp;&middot;&nbsp;<%= g.get("capacity") %>
+                        </div>
+                    </div>
+                    <div style="flex-shrink:0;">
+                        <% if (isMember) { %>
+                            <span style="font-size:0.78rem;color:#15803d;font-weight:500;">&#10003; Joined</span>
+                        <% } else if (isFull) { %>
+                            <span style="font-size:0.78rem;color:var(--sm-text-muted);">Full</span>
+                        <% } else { %>
+                            <a href="joinGroup.jsp?groupId=<%= g.get("groupId") %>"
+                               class="sm-btn sm-btn-primary"
+                               style="font-size:0.78rem;padding:0.25rem 0.75rem;">Join</a>
+                        <% } %>
+                    </div>
+                </div>
             <% } } %>
 
         </div>

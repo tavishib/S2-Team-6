@@ -139,6 +139,13 @@
         isMember = rs.next();
         rs.close(); ps.close();
 
+        // Block non-members from viewing private group details
+        if ("Private".equals(status) && !isMember && currentUserId != leaderId) {
+            conn.close();
+            response.sendRedirect("searchGroups.jsp?privateBlocked=1");
+            return;
+        }
+
         // Members list
         ps = conn.prepareStatement(
             "SELECT m.user_id, u.name, s.major, m.membership_role, m.joined_at " +
