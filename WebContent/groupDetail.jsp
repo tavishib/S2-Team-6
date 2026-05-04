@@ -413,6 +413,9 @@
                              font-weight:600;letter-spacing:0.03em;white-space:nowrap;">
                     Group #<%= groupId %>
                 </span>
+                <% if ("Private".equals(status)) { %>
+                    <span title="Private group" style="font-size:1.1rem;">🔒</span>
+                <% } %>
             </div>
             <div style="font-size:0.9rem;color:var(--sm-text-muted);margin-bottom:0.1rem;">
                 <strong style="color:var(--sm-text);"><%= courseId %></strong>

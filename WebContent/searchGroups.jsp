@@ -191,6 +191,9 @@
 				                     font-weight:600;letter-spacing:0.03em;white-space:nowrap;">
 				            Group #<%= g.get("groupId") %>
 				        </span>
+				        <% if ("Private".equals(g.get("status"))) { %>
+				            <span title="Private — passcode required" style="font-size:0.85rem;">🔒</span>
+				        <% } %>
 				    </div>
 				    <p>Course: <%= g.get("course") %></p>
 				    <p>Modality: <%= g.get("modality") %></p>

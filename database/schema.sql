@@ -36,6 +36,7 @@ CREATE TABLE Study_Group (
     modality VARCHAR(20),
     max_capacity INT,
     current_status VARCHAR(20),
+    passcode VARCHAR(100) DEFAULT NULL,
     location VARCHAR(100),
 
     FOREIGN KEY (course_id) REFERENCES Course(course_id),

@@ -25,7 +25,12 @@
         String modality    = request.getParameter("modality");
         String status      = request.getParameter("status");
         String location    = request.getParameter("location");
+        String passcode    = request.getParameter("passcode");
         int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));
+
+        if ("Private".equals(status) && (passcode == null || passcode.isBlank())) {
+            request.setAttribute("error", "A passcode is required for private groups.");
+        } else {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -40,7 +45,7 @@
                 try {
                     // Insert group
                     PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO Study_Group (course_id, leader_id, group_name, description, modality, max_capacity, current_status, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "INSERT INTO Study_Group (course_id, leader_id, group_name, description, modality, max_capacity, current_status, passcode, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS
                     );
 
@@ -51,7 +56,8 @@
                     ps.setString(5, modality);
                     ps.setInt(6, maxCapacity);
                     ps.setString(7, status);
-                    ps.setString(8, location);
+                    ps.setString(8, "Private".equals(status) ? passcode.trim() : null);
+                    ps.setString(9, location);
 
                     ps.executeUpdate();
 
@@ -85,6 +91,7 @@
         } catch (Exception e) {
             request.setAttribute("error", "Database error: " + e.getMessage());
         }
+        } // end else (passcode validation passed)
     }
 %>
 
@@ -156,11 +163,19 @@
                 </div>
 
                 <div class="sm-field-group">
-                    <label>Status</label>
-                    <select class="sm-select" name="status">
-                        <option value="Public">Public</option>
-                        <option value="Private">Private</option>
+                    <label>Visibility</label>
+                    <select class="sm-select" name="status" id="statusSelect"
+                            onchange="document.getElementById('passcodeField').style.display=
+                                      this.value==='Private'?'flex':'none'">
+                        <option value="Public">Public — anyone can join</option>
+                        <option value="Private">Private — passcode required</option>
                     </select>
+                </div>
+
+                <div class="sm-field-group" id="passcodeField" style="display:none;">
+                    <label for="passcode">Passcode</label>
+                    <input id="passcode" class="sm-input" type="text" name="passcode"
+                           placeholder="Set a passcode for members to use">
                 </div>
 
                 <div class="sm-field-group">
