@@ -211,9 +211,9 @@
                     </button>
                 </form>
 
-                <p class="sm-card-note">
+<!--                 <p class="sm-card-note">
                     You can refine results later by time, size, and location.
-                </p>
+                </p> -->
 
             </aside>
 

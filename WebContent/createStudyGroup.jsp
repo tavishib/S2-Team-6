@@ -26,6 +26,7 @@
         String status      = request.getParameter("status");
         String location    = request.getParameter("location");
         String passcode    = request.getParameter("passcode");
+        String tagsRaw     = request.getParameter("tags");
         int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));
 
         if ("Private".equals(status) && (passcode == null || passcode.isBlank())) {
@@ -76,6 +77,36 @@
                     ps.setInt(1, userId);
                     ps.setInt(2, groupId);
                     ps.executeUpdate();
+
+                    // Insert tags into Tag (if new) and link via Group_Tag
+                    if (tagsRaw != null && !tagsRaw.isBlank()) {
+                        for (String rawTag : tagsRaw.split(",")) {
+                            String tagName = rawTag.trim();
+                            if (tagName.isEmpty()) continue;
+
+                            // Create tag if it doesn't exist
+                            PreparedStatement tagPs = conn.prepareStatement(
+                                "INSERT IGNORE INTO Tag (tag_name) VALUES (?)");
+                            tagPs.setString(1, tagName);
+                            tagPs.executeUpdate();
+                            tagPs.close();
+
+                            // Get tag_id
+                            PreparedStatement tagId = conn.prepareStatement(
+                                "SELECT tag_id FROM Tag WHERE tag_name = ?");
+                            tagId.setString(1, tagName);
+                            ResultSet tagRs = tagId.executeQuery();
+                            if (tagRs.next()) {
+                                PreparedStatement gtPs = conn.prepareStatement(
+                                    "INSERT IGNORE INTO Group_Tag (group_id, tag_id) VALUES (?, ?)");
+                                gtPs.setInt(1, groupId);
+                                gtPs.setInt(2, tagRs.getInt("tag_id"));
+                                gtPs.executeUpdate();
+                                gtPs.close();
+                            }
+                            tagId.close();
+                        }
+                    }
 
                     conn.commit();
 
@@ -186,6 +217,15 @@
                 <div class="sm-field-group">
                     <label>Max Capacity</label>
                     <input class="sm-input" type="number" name="maxCapacity" required>
+                </div>
+
+                <div class="sm-field-group">
+                    <label>Tags <span style="font-weight:400;color:var(--sm-text-muted);">(optional, comma-separated)</span></label>
+                    <input class="sm-input" type="text" name="tags"
+                           placeholder="e.g. Exam Prep, Algorithms, Project">
+                    <span style="font-size:0.78rem;color:var(--sm-text-muted);margin-top:0.2rem;">
+                        New tags are created automatically.
+                    </span>
                 </div>
 
                 <button type="submit" class="sm-btn sm-btn-primary sm-full-width">

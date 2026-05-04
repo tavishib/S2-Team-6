@@ -9,12 +9,13 @@
 
     List<Map<String, String>> results = new ArrayList<>();
 
-    String courseId   = request.getParameter("courseId");
-    String modality   = request.getParameter("modality");
-    String location   = request.getParameter("location");
-    String status     = request.getParameter("status");
-    String meetingDay = request.getParameter("meetingDay");
-    String tag        = request.getParameter("tag");
+    String groupIdSearch = request.getParameter("groupId");
+    String courseId      = request.getParameter("courseId");
+    String modality      = request.getParameter("modality");
+    String location      = request.getParameter("location");
+    String status        = request.getParameter("status");
+    String meetingDay    = request.getParameter("meetingDay");
+    String tag           = request.getParameter("tag");
     int uId           = (int) session.getAttribute("userId");
 
     try {
@@ -41,6 +42,12 @@
 
         List<Object> params = new ArrayList<>();
 
+        if (groupIdSearch != null && !groupIdSearch.isEmpty()) {
+            try {
+                sql.append("AND sg.group_id = ? ");
+                params.add(Integer.parseInt(groupIdSearch.trim()));
+            } catch (NumberFormatException ignored) {}
+        }
         if (courseId != null && !courseId.isEmpty()) {
             sql.append("AND sg.course_id = ? ");
             params.add(courseId);
@@ -132,7 +139,11 @@
 
             <form method="get" style="display:flex;flex-direction:column;gap:0.7rem;">
 
-                <input class="sm-input" type="text" name="courseId" placeholder="Course ID">
+                <input class="sm-input" type="number" name="groupId" placeholder="Group ID (e.g. 3)"
+                       min="1" value="<%= groupIdSearch != null ? groupIdSearch : "" %>">
+
+                <input class="sm-input" type="text" name="courseId" placeholder="Course ID"
+                       value="<%= courseId != null ? courseId : "" %>">
 
                 <select class="sm-select" name="modality">
                     <option value="">Any Modality</option>

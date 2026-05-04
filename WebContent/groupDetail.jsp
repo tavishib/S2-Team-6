@@ -419,8 +419,7 @@
                 <% } %>
             </div>
             <div style="font-size:0.9rem;color:var(--sm-text-muted);margin-bottom:0.1rem;">
-                <strong style="color:var(--sm-text);"><%= courseId %></strong>
-<%--                 — <%= deptName %> &middot; <%= courseTitle %> --%>
+                <strong style="color:var(--sm-text);"><%= courseId %></strong> — <%= courseTitle %>
             </div>
   
 
@@ -652,7 +651,7 @@
         </div>
 
         <!-- Quick info card -->
-        <div class="gd-card" style="font-size:0.85rem;color:var(--sm-text-muted);">
+       <%--  <div class="gd-card" style="font-size:0.85rem;color:var(--sm-text-muted);">
             <div class="gd-section-title">About</div>
             <div style="display:flex;flex-direction:column;gap:0.45rem;">
                 <div><span style="color:var(--sm-text);font-weight:500;">Group ID</span><br>#<%= groupId %></div>
@@ -664,7 +663,7 @@
                 <div><span style="color:var(--sm-text);font-weight:500;">Status</span><br><%= status %></div>
                 <div><span style="color:var(--sm-text);font-weight:500;">Capacity</span><br><%= memberCount %> of <%= maxCapacity %> filled</div>
             </div>
-        </div>
+        </div> --%>
 
       </div><!-- end right column -->
     </div><!-- end gd-grid -->
