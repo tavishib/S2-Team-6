@@ -477,8 +477,8 @@
                     <span class="gd-pill gd-pill-green">✓ You're a member</span>
                     <a href="leaveGroup.jsp?groupId=<%= groupId %>"
                        class="sm-btn sm-btn-outline"
-                       style="font-size:0.8rem;padding:0.2rem 0.65rem;color:#dc2626;border-color:#dc2626;"
-                       onclick="return confirm('Leave this group?')">Leave group</a>
+                       style="font-size:0.8rem;padding:0.2rem 0.65rem;color:#dc2626;border-color:#dc2626;">
+                        Leave group</a>
                 </div>
             <% } else { %>
                 <div style="margin-top:1.1rem;">
