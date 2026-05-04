@@ -74,9 +74,9 @@
                     }
 
                     //insert into meeting schedule
-                    if (meetingDay != null && startTime != null && endTime != null && meetingType != null) {
+                    if (meetingDay != null && !meetingDay.isBlank() && startTime != null && !startTime.isBlank() && endTime != null && !endTime.isBlank() && meetingType != null && !meetingType.isBlank()) {
                         PreparedStatement msPs = conn.prepareStatement(
-                            "INSERT INTO Meeting_Schedule (group_id, meeting_day, start_time, end_time, location, meeting_type) VALUES (?, ?, ?, ?, ?)"
+                            "INSERT INTO Meeting_Schedule (group_id, meeting_day, start_time, end_time, location, meeting_type) VALUES (?, ?, ?, ?, ?, ?)"
                         );
                         msPs.setInt(1, groupId);
                         msPs.setString(2, meetingDay);
@@ -85,6 +85,7 @@
                         msPs.setString(5, location);
                         msPs.setString(6, meetingType);
                         msPs.executeUpdate();
+                        msPs.close();
                     }
 
                     // Add creator as leader/member

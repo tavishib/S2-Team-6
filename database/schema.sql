@@ -5,7 +5,8 @@ CREATE TABLE User (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
     email VARCHAR(100) UNIQUE,
-    password_hash VARCHAR(255)
+    password_hash VARCHAR(255),
+    is_banned BOOLEAN DEFAULT FALSE
 );
 --Create table to store Student information, linked to User table
 CREATE TABLE Student (
@@ -104,3 +105,9 @@ CREATE TABLE Group_Tag (
     FOREIGN KEY (group_id) REFERENCES Study_Group(group_id),
     FOREIGN KEY (tag_id) REFERENCES Tag(tag_id)
 );
+--Create default admin account
+INSERT INTO User (name, email, password_hash)
+VALUES ('Admin User', 'admin@sjsu.edu', SHA2('admin123', 256));
+
+INSERT INTO Administrator (user_id, admin_level)
+VALUES (LAST_INSERT_ID(), 1);
