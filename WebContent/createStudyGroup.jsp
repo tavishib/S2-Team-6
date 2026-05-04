@@ -73,6 +73,19 @@
                         groupId = rs.getInt(1);
                     }
 
+                    //insert into meeting schedule
+                    if meetingDay != null && startTime != null && endTime != null && meetingType != null {
+                        PreparedStatement msPs = conn.prepareStatement(
+                            "INSERT INTO Meeting_Schedule (group_id, meeting_day, start_time, end_time, meeting_type) VALUES (?, ?, ?, ?, ?)"
+                        );
+                        msPs.setInt(1, groupId);
+                        msPs.setString(2, meetingDay);
+                        msPs.setTime(3, Time.valueOf(startTime + ":00"));
+                        msPs.setTime(4, Time.valueOf(endTime + ":00"));
+                        msPs.setString(5, meetingType);
+                        msPs.executeUpdate();
+                    }
+
                     // Add creator as leader/member
                     ps = conn.prepareStatement(
                         "INSERT INTO Membership (user_id, group_id, joined_at, membership_role, membership_status) VALUES (?, ?, NOW(), 'Leader', 'Active')"
