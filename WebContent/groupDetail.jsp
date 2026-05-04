@@ -406,7 +406,14 @@
         <!-- Group Info Card -->
         <div class="gd-card">
             <div class="gd-section-title">Study Group</div>
-            <h1 style="margin:0 0 0.2rem;font-size:1.45rem;"><%= groupName %></h1>
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+                <h1 style="margin:0;font-size:1.45rem;"><%= groupName %></h1>
+                <span style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
+                             border-radius:99px;padding:0.2rem 0.75rem;font-size:0.8rem;
+                             font-weight:600;letter-spacing:0.03em;white-space:nowrap;">
+                    Group #<%= groupId %>
+                </span>
+            </div>
             <div style="font-size:0.9rem;color:var(--sm-text-muted);margin-bottom:0.1rem;">
                 <strong style="color:var(--sm-text);"><%= courseId %></strong>
                 — <%= deptName %> &middot; <%= courseTitle %>
@@ -635,6 +642,7 @@
         <div class="gd-card" style="font-size:0.85rem;color:var(--sm-text-muted);">
             <div class="gd-section-title">About</div>
             <div style="display:flex;flex-direction:column;gap:0.45rem;">
+                <div><span style="color:var(--sm-text);font-weight:500;">Group ID</span><br>#<%= groupId %></div>
                 <div><span style="color:var(--sm-text);font-weight:500;">Course</span><br><%= courseId %> – <%= courseTitle %></div>
                 <div><span style="color:var(--sm-text);font-weight:500;">Modality</span><br><%= modality %></div>
                 <% if (!location.isEmpty()) { %>

@@ -91,6 +91,28 @@
 					<a href="listCourses.jsp" class="sm-btn sm-btn-secondary">List courses</a>
 				</div>
 
+                <div style="display:flex;align-items:center;justify-content:space-between;
+                            flex-wrap:wrap;gap:0.5rem;
+                            margin-top:2rem;margin-bottom:0.5rem;">
+                    <div>
+                        <div class="sm-small-label" style="margin-bottom:0.15rem;">Enrolled</div>
+                        <h2 style="margin:0;font-size:1.1rem;font-weight:600;color:var(--sm-text);">
+                            My Study Groups
+                        </h2>
+                    </div>
+                    <!-- <a href="searchGroups.jsp"
+                       style="font-size:0.82rem;font-weight:500;color:var(--sm-primary);
+                              text-decoration:none;white-space:nowrap;
+                              padding:0.3rem 0.75rem;border:1px solid var(--sm-primary);
+                              border-radius:var(--sm-radius-full,99px);
+                              transition:background 0.15s,color 0.15s;"
+                       onmouseover="this.style.background='var(--sm-primary)';this.style.color='#fff'"
+                       onmouseout="this.style.background='transparent';this.style.color='var(--sm-primary)'">
+                        + Find a group
+                    </a> -->
+                </div>
+                <hr style="border:none;border-top:1px solid var(--sm-border,#e5e7eb);margin:0 0 0.25rem;">
+
                 <div class="sm-quick-links">
     <%
         try {
@@ -114,18 +136,16 @@
                     <div class="sm-quick-link" style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <a href="groupDetail.jsp?groupId=<%= rs.getInt("group_id") %>"
-                               style="color:var(--sm-text);text-decoration:none;font-weight:500;"
+                               style="color:var(--sm-text);text-decoration:none;font-weight:500;display:block;"
                                onmouseover="this.style.color='var(--sm-primary)'"
                                onmouseout="this.style.color='var(--sm-text)'">
                                 <%= rs.getString("group_name") %>
                             </a>
-                            <%= rs.getString("course_id") %> &bull; <%= role %>
+                            <span style="font-size:0.8rem;color:var(--sm-text-muted);">Group ID: <%= rs.getInt("group_id") %></span>
+                            <span style="font-size:0.8rem;color:var(--sm-text-muted);display:block;"><%= rs.getString("course_id") %></span>
                         </div>
                         <% if (!"Leader".equals(role)) { %>
-                            <a href="leaveGroup.jsp?groupId=<%= rs.getInt("group_id") %>"
-                               class="sm-btn sm-btn-outline"
-                               style="font-size:0.8rem;padding:0.2rem 0.6rem;color:#dc2626;border-color:#dc2626;"
-                               onclick="return confirm('Leave this group?')">Leave</a>
+                            <span style="font-size:0.75rem;color:var(--sm-text-muted);">Member</span>
                         <% } else { %>
                             <span style="font-size:0.75rem;color:var(--sm-text-muted);">Leader</span>
                         <% } %>
@@ -142,7 +162,7 @@
         } catch (Exception e) { %>
             <div class="sm-quick-link" style="color:red;">Error loading groups: <%= e.getMessage() %></div>
         <% } %>
-
+<!-- 
     <div class="sm-quick-link">
         <span>Upcoming sessions</span>
         See what's scheduled this week.
@@ -150,7 +170,7 @@
     <div class="sm-quick-link">
         <span>Explore courses</span>
         Browse groups by course ID.
-    </div>
+    </div> -->
 </div>
             </div>
 

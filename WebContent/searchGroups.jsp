@@ -184,7 +184,14 @@
                 for (Map<String, String> g : results) { %>
 
                 <div style="border:1px solid #eee;padding:10px;border-radius:8px;margin:10px 0;">
-				    <h4><%= g.get("name") %></h4>
+				    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+				        <h4 style="margin:0;"><%= g.get("name") %></h4>
+				        <span style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
+				                     border-radius:99px;padding:0.15rem 0.6rem;font-size:0.75rem;
+				                     font-weight:600;letter-spacing:0.03em;white-space:nowrap;">
+				            Group #<%= g.get("groupId") %>
+				        </span>
+				    </div>
 				    <p>Course: <%= g.get("course") %></p>
 				    <p>Modality: <%= g.get("modality") %></p>
 				    <p>Location: <%= g.get("location") %></p>
