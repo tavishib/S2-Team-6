@@ -28,6 +28,10 @@
         String passcode    = request.getParameter("passcode");
         String tagsRaw     = request.getParameter("tags");
         int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));
+        String meetingDay    = request.getParameter("meetingDay");
+        String startTime     = request.getParameter("startTime");
+        String endTime       = request.getParameter("endTime");
+        String meetingType   = request.getParameter("meetingType");
 
         if ("Private".equals(status) && (passcode == null || passcode.isBlank())) {
             request.setAttribute("error", "A passcode is required for private groups.");
