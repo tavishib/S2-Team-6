@@ -141,7 +141,7 @@
 
         // Members list
         ps = conn.prepareStatement(
-            "SELECT u.name, s.major, m.membership_role, m.joined_at " +
+            "SELECT m.user_id, u.name, s.major, m.membership_role, m.joined_at " +
             "FROM Membership m " +
             "JOIN User u ON m.user_id = u.user_id " +
             "JOIN Student s ON m.user_id = s.user_id " +
@@ -155,7 +155,8 @@
                 rs.getString("major") != null ? rs.getString("major") : "",
                 rs.getString("membership_role"),
                 rs.getTimestamp("joined_at") != null
-                    ? new SimpleDateFormat("MMM yyyy").format(rs.getTimestamp("joined_at")) : ""
+                    ? new SimpleDateFormat("MMM yyyy").format(rs.getTimestamp("joined_at")) : "",
+                String.valueOf(rs.getInt("user_id"))
             });
         }
         rs.close(); ps.close();
@@ -411,7 +412,7 @@
                 <span style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
                              border-radius:99px;padding:0.2rem 0.75rem;font-size:0.8rem;
                              font-weight:600;letter-spacing:0.03em;white-space:nowrap;">
-                    Group #<%= groupId %>
+                    Group ID: <%= groupId %>
                 </span>
                 <% if ("Private".equals(status)) { %>
                     <span title="Private group" style="font-size:1.1rem;">🔒</span>
@@ -419,11 +420,9 @@
             </div>
             <div style="font-size:0.9rem;color:var(--sm-text-muted);margin-bottom:0.1rem;">
                 <strong style="color:var(--sm-text);"><%= courseId %></strong>
-                — <%= deptName %> &middot; <%= courseTitle %>
+<%--                 — <%= deptName %> &middot; <%= courseTitle %> --%>
             </div>
-            <div style="font-size:0.85rem;color:var(--sm-text-muted);margin-bottom:0.6rem;">
-                Led by <strong style="color:var(--sm-text);"><%= leaderName %></strong>
-            </div>
+  
 
             <!-- Meta pills -->
             <div class="gd-meta">
@@ -442,7 +441,7 @@
                     <span class="gd-pill gd-pill-purple"><%= tag %></span>
                 <% } %>
             </div>
-
+<%-- 
             <!-- Capacity bar -->
             <div style="margin-top:1rem;">
                 <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--sm-text-muted);">
@@ -452,7 +451,7 @@
                 <div class="gd-cap-bar">
                     <div class="gd-cap-fill" style="width:<%= maxCapacity > 0 ? (memberCount * 100 / maxCapacity) : 0 %>%;"></div>
                 </div>
-            </div>
+            </div> --%>
 
             <% if (!description.isEmpty()) { %>
                 <p style="margin:1rem 0 0;font-size:0.9rem;color:var(--sm-text-muted);line-height:1.6;">
@@ -461,7 +460,7 @@
             <% } %>
 
             <!-- Join button for non-members -->
-            <% if (!isMember && currentUserId != leaderId) { %>
+            <%-- <% if (!isMember && currentUserId != leaderId) { %>
                 <div style="margin-top:1.1rem;">
                     <% if (spotsLeft > 0 && "Active".equals(status)) { %>
                         <a href="joinGroup.jsp?groupId=<%= groupId %>"
@@ -484,7 +483,7 @@
                 <div style="margin-top:1.1rem;">
                     <span class="gd-pill gd-pill-purple">You are the leader</span>
                 </div>
-            <% } %>
+            <% } %> --%>
         </div>
 
         <!-- ── Message Board ───────────────────────────────────────── -->
@@ -610,6 +609,17 @@
                     <span class="gd-pill <%= roleClass %>" style="font-size:0.7rem;padding:0.15rem 0.55rem;">
                         <%= m[2] %>
                     </span>
+                    <% if (Integer.parseInt(m[4]) == currentUserId && !"Leader".equals(m[2])) { %>
+                        <a href="leaveGroup.jsp?groupId=<%= groupId %>"
+                           style="font-size:0.75rem;color:#dc2626;text-decoration:none;
+                                  border:1px solid #dc2626;border-radius:99px;
+                                  padding:0.15rem 0.55rem;white-space:nowrap;
+                                  transition:background 0.15s,color 0.15s;"
+                           onmouseover="this.style.background='#dc2626';this.style.color='#fff'"
+                           onmouseout="this.style.background='transparent';this.style.color='#dc2626'">
+                            Leave
+                        </a>
+                    <% } %>
                 </div>
             <%  }
             } %>
