@@ -180,6 +180,15 @@
                 <p>Filter by course, meeting type and focus.</p>
 
                 <form id="quickSearchForm" action="searchGroups.jsp" method="get">
+                    <input type="hidden" name="searched" value="1">
+                    
+                    
+                    <div class="sm-field-group">
+                        <label for="groupId">Group ID</label>
+                        <input id="groupId" class="sm-input" type="text" name="groupId"
+                               placeholder="e.g. 1">
+                    </div>
+
                     <div class="sm-field-group">
                         <label for="courseId">Course ID</label>
                         <input id="courseId" class="sm-input" type="text" name="courseId"
@@ -196,15 +205,6 @@
                         </select>
                     </div>
 
-                    <div class="sm-field-group">
-                        <label for="tag">Focus</label>
-                        <select id="tag" class="sm-select" name="tag">
-                            <option value="">Any</option>
-                            <option value="Homework">Homework</option>
-                            <option value="Exam Prep">Exam Prep</option>
-                            <option value="Project">Project</option>
-                        </select>
-                    </div>
 
                     <button type="submit" class="sm-btn sm-btn-primary sm-full-width">
                         Search groups

@@ -8,6 +8,7 @@
     }
 
     List<Map<String, String>> results = new ArrayList<>();
+    boolean searched = "1".equals(request.getParameter("searched"));
 
     String groupIdSearch = request.getParameter("groupId");
     String courseId      = request.getParameter("courseId");
@@ -16,9 +17,9 @@
     String status        = request.getParameter("status");
     String meetingDay    = request.getParameter("meetingDay");
     String tag           = request.getParameter("tag");
-    int uId           = (int) session.getAttribute("userId");
+    int uId              = (int) session.getAttribute("userId");
 
-    try {
+    if (searched) try {
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
@@ -110,7 +111,7 @@
 
     } catch (Exception e) {
         request.setAttribute("error", e.getMessage());
-    }
+    } // end if (searched)
 %>
 
 <!DOCTYPE html>
@@ -138,6 +139,7 @@
             <h2>Search Study Groups</h2>
 
             <form method="get" style="display:flex;flex-direction:column;gap:0.7rem;">
+                <input type="hidden" name="searched" value="1">
 
                 <input class="sm-input" type="number" name="groupId" placeholder="Group ID (e.g. 3)"
                        min="1" value="<%= groupIdSearch != null ? groupIdSearch : "" %>">
@@ -160,25 +162,27 @@
                     <option value="Private">Private</option>
                 </select>
 
-                <select class="sm-select" name="meetingDay">
+
+                <!-- <select class="sm-select" name="meetingDay">
                     <option value="">Any Day</option>
                     <option value="Monday">Monday</option>
                     <option value="Tuesday">Tuesday</option>
                     <option value="Wednesday">Wednesday</option>
-                </select>
+                </select> -->
 
-                <select class="sm-select" name="tag">
+                <!-- <select class="sm-select" name="tag">
                     <option value="">Any Tag</option>
                     <option value="Homework">Homework</option>
                     <option value="Exam Prep">Exam Prep</option>
                     <option value="Project">Project</option>
-                </select>
+                </select> -->
 
                 <button class="sm-btn sm-btn-primary">Search</button>
             </form>
         </div>
     </div>
 
+    <% if (searched) { %>
     <div class="sm-container" style="max-width:600px; margin-top:1rem;">
         <div class="sm-dashboard-side sm-quick-card" style="padding:1rem 1.2rem;">
 
@@ -251,6 +255,7 @@
 
         </div>
     </div>
+    <% } %>
 </main>
 
 </body>
