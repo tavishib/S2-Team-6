@@ -428,7 +428,6 @@
             <div style="font-size:0.9rem;color:var(--sm-text-muted);margin-bottom:0.1rem;">
                 <strong style="color:var(--sm-text);"><%= courseId %></strong> — <%= courseTitle %>
             </div>
-  
 
             <!-- Meta pills -->
             <div class="gd-meta">
@@ -440,24 +439,13 @@
                 %>
                 <span class="gd-pill <%= modalityClass %>"><%= modality %></span>
                 <span class="gd-pill <%= statusClass %>"><%= status %></span>
-                <% if (!location.isEmpty()) { %>
+                <% if (location != null && !location.isEmpty()) { %>
                     <span class="gd-pill gd-pill-gray">📍 <%= location %></span>
                 <% } %>
                 <% for (String tag : tags) { %>
                     <span class="gd-pill gd-pill-purple"><%= tag %></span>
                 <% } %>
             </div>
-<%-- 
-            <!-- Capacity bar -->
-            <div style="margin-top:1rem;">
-                <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--sm-text-muted);">
-                    <span><%= memberCount %> / <%= maxCapacity %> members</span>
-                    <span><%= spotsLeft > 0 ? spotsLeft + " spot" + (spotsLeft == 1 ? "" : "s") + " left" : "Full" %></span>
-                </div>
-                <div class="gd-cap-bar">
-                    <div class="gd-cap-fill" style="width:<%= maxCapacity > 0 ? (memberCount * 100 / maxCapacity) : 0 %>%;"></div>
-                </div>
-            </div> --%>
 
             <% if (!description.isEmpty()) { %>
                 <p style="margin:1rem 0 0;font-size:0.9rem;color:var(--sm-text-muted);line-height:1.6;">
@@ -465,8 +453,29 @@
                 </p>
             <% } %>
 
-            <!-- Join button for non-members -->
-            <%-- <% if (!isMember && currentUserId != leaderId) { %>
+            <!-- ── Leader actions / member status ───────────────── -->
+            <% if (currentUserId == leaderId) { %>
+                <div style="margin-top:1.1rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                    <span class="gd-pill gd-pill-purple">You are the leader</span>
+                    <a href="deleteGroup.jsp?groupId=<%= groupId %>"
+                       class="sm-btn sm-btn-outline"
+                       style="font-size:0.8rem;padding:0.2rem 0.65rem;color:#dc2626;border-color:#dc2626;"
+                       onclick="return confirm('Are you sure you want to delete \&quot;<%= groupName %>\&quot;? This cannot be undone.');"
+                       onmouseover="this.style.background='#dc2626';this.style.color='#fff'"
+                       onmouseout="this.style.background='transparent';this.style.color='#dc2626'">
+                        🗑 Delete Group
+                    </a>
+                </div>
+            <% } else if (isMember) { %>
+                <div style="margin-top:1.1rem;display:flex;align-items:center;gap:0.75rem;">
+                    <span class="gd-pill gd-pill-green">✓ You're a member</span>
+                    <a href="leaveGroup.jsp?groupId=<%= groupId %>"
+                       class="sm-btn sm-btn-outline"
+                       style="font-size:0.8rem;padding:0.2rem 0.65rem;color:#dc2626;border-color:#dc2626;">
+                        Leave group
+                    </a>
+                </div>
+            <% } else { %>
                 <div style="margin-top:1.1rem;">
                     <% if (spotsLeft > 0 && "Active".equals(status)) { %>
                         <a href="joinGroup.jsp?groupId=<%= groupId %>"
@@ -477,19 +486,7 @@
                         <span style="font-size:0.85rem;color:#6b7280;">This group is not accepting members.</span>
                     <% } %>
                 </div>
-            <% } else if (isMember && currentUserId != leaderId) { %>
-                <div style="margin-top:1.1rem;display:flex;align-items:center;gap:0.75rem;">
-                    <span class="gd-pill gd-pill-green">✓ You're a member</span>
-                    <a href="leaveGroup.jsp?groupId=<%= groupId %>"
-                       class="sm-btn sm-btn-outline"
-                       style="font-size:0.8rem;padding:0.2rem 0.65rem;color:#dc2626;border-color:#dc2626;">
-                        Leave group</a>
-                </div>
-            <% } else { %>
-                <div style="margin-top:1.1rem;">
-                    <span class="gd-pill gd-pill-purple">You are the leader</span>
-                </div>
-            <% } %> --%>
+            <% } %>
         </div>
 
         <!-- ── Message Board ───────────────────────────────────────── -->
@@ -656,21 +653,6 @@
             <%  }
             } %>
         </div>
-
-        <!-- Quick info card -->
-       <%--  <div class="gd-card" style="font-size:0.85rem;color:var(--sm-text-muted);">
-            <div class="gd-section-title">About</div>
-            <div style="display:flex;flex-direction:column;gap:0.45rem;">
-                <div><span style="color:var(--sm-text);font-weight:500;">Group ID</span><br>#<%= groupId %></div>
-                <div><span style="color:var(--sm-text);font-weight:500;">Course</span><br><%= courseId %> – <%= courseTitle %></div>
-                <div><span style="color:var(--sm-text);font-weight:500;">Modality</span><br><%= modality %></div>
-                <% if (!location.isEmpty()) { %>
-                    <div><span style="color:var(--sm-text);font-weight:500;">Location</span><br><%= location %></div>
-                <% } %>
-                <div><span style="color:var(--sm-text);font-weight:500;">Status</span><br><%= status %></div>
-                <div><span style="color:var(--sm-text);font-weight:500;">Capacity</span><br><%= memberCount %> of <%= maxCapacity %> filled</div>
-            </div>
-        </div> --%>
 
       </div><!-- end right column -->
     </div><!-- end gd-grid -->
