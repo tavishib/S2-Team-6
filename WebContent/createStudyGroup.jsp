@@ -27,8 +27,7 @@
         String location    = request.getParameter("location");
         String passcode    = request.getParameter("passcode");
         String tagsRaw     = request.getParameter("tags");
-        int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));
-        String meetingDay    = request.getParameter("meetingDay");
+        int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));         String meetingDay    = request.getParameter("meetingDay");
         String startTime     = request.getParameter("startTime");
         String endTime       = request.getParameter("endTime");
         String meetingType   = request.getParameter("meetingType");
@@ -247,7 +246,7 @@
                     </span>
                 </div>
 
-                <div class="sm-field-group">
+   <!--              <div class="sm-field-group">
                     <label>Meeting Day</label>
                     <select name="meetingDay" class="sm-select">
                         <option>Monday</option>
@@ -258,9 +257,9 @@
                         <option>Saturday</option>
                         <option>Sunday</option>
                     </select>
-                </div>
+                </div> -->
 
-                <div class="sm-field-group">
+  <!--               <div class="sm-field-group">
                     <label>Start Time</label>
                     <input type="time" name="startTime" class="sm-input">
                 </div>
@@ -277,7 +276,7 @@
                         <option value="In-Person">In-Person</option>
                     </select>
                 </div>
-
+ -->
                 <button type="submit" class="sm-btn sm-btn-primary sm-full-width">
                     Create Group
                 </button>
