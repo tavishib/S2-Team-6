@@ -91,6 +91,14 @@
 					<a href="listCourses.jsp" class="sm-btn sm-btn-secondary">List courses</a>
 				</div>
 
+                <% if ("Admin".equals(session.getAttribute("role"))) { %>
+                    <div style="margin-top:0.5rem;">
+                        <a href="adminUsers.jsp" class="sm-btn sm-btn-outline">
+                            Admin Panel
+                        </a>
+                    </div>
+<%              } %>
+
                 <div style="display:flex;align-items:center;justify-content:space-between;
                             flex-wrap:wrap;gap:0.5rem;
                             margin-top:2rem;margin-bottom:0.5rem;">

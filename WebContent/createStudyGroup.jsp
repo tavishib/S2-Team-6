@@ -28,6 +28,10 @@
         String passcode    = request.getParameter("passcode");
         String tagsRaw     = request.getParameter("tags");
         int maxCapacity    = Integer.parseInt(request.getParameter("maxCapacity"));
+        String meetingDay    = request.getParameter("meetingDay");
+        String startTime     = request.getParameter("startTime");
+        String endTime       = request.getParameter("endTime");
+        String meetingType   = request.getParameter("meetingType");
 
         if ("Private".equals(status) && (passcode == null || passcode.isBlank())) {
             request.setAttribute("error", "A passcode is required for private groups.");
@@ -67,6 +71,21 @@
                     int groupId = 0;
                     if (rs.next()) {
                         groupId = rs.getInt(1);
+                    }
+
+                    //insert into meeting schedule
+                    if (meetingDay != null && !meetingDay.isBlank() && startTime != null && !startTime.isBlank() && endTime != null && !endTime.isBlank() && meetingType != null && !meetingType.isBlank()) {
+                        PreparedStatement msPs = conn.prepareStatement(
+                            "INSERT INTO Meeting_Schedule (group_id, meeting_day, start_time, end_time, location, meeting_type) VALUES (?, ?, ?, ?, ?, ?)"
+                        );
+                        msPs.setInt(1, groupId);
+                        msPs.setString(2, meetingDay);
+                        msPs.setTime(3, Time.valueOf(startTime + ":00"));
+                        msPs.setTime(4, Time.valueOf(endTime + ":00"));
+                        msPs.setString(5, location);
+                        msPs.setString(6, meetingType);
+                        msPs.executeUpdate();
+                        msPs.close();
                     }
 
                     // Add creator as leader/member
@@ -226,6 +245,37 @@
                     <span style="font-size:0.78rem;color:var(--sm-text-muted);margin-top:0.2rem;">
                         New tags are created automatically.
                     </span>
+                </div>
+
+                <div class="sm-field-group">
+                    <label>Meeting Day</label>
+                    <select name="meetingDay" class="sm-select">
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+                    </select>
+                </div>
+
+                <div class="sm-field-group">
+                    <label>Start Time</label>
+                    <input type="time" name="startTime" class="sm-input">
+                </div>
+
+                <div class="sm-field-group">
+                    <label>End Time</label>
+                    <input type="time" name="endTime" class="sm-input">
+                </div>
+
+                <div class="sm-field-group">
+                    <label>Meeting Type</label>
+                    <select name="meetingType" class="sm-select">
+                        <option value="Online">Online</option>
+                        <option value="In-Person">In-Person</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="sm-btn sm-btn-primary sm-full-width">
