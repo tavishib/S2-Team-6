@@ -57,6 +57,53 @@
                 ps.executeUpdate();
                 ps.close();
                 postSuccess = "Reply posted.";
+
+            } else if ("addSchedule".equals(action)) {
+                PreparedStatement chk = conn.prepareStatement(
+                    "SELECT leader_id FROM Study_Group WHERE group_id = ?");
+                chk.setInt(1, groupId);
+                ResultSet chkRs = chk.executeQuery();
+                if (chkRs.next() && chkRs.getInt("leader_id") == currentUserId) {
+                    String mDay  = request.getParameter("meetingDay");
+                    String mSt   = request.getParameter("startTime");
+                    String mEt   = request.getParameter("endTime");
+                    String mType = request.getParameter("meetingType");
+                    String mLoc  = request.getParameter("meetingLocation");
+                    if (mDay != null && mSt != null && mEt != null && mType != null
+                            && !mDay.isBlank() && !mSt.isBlank() && !mEt.isBlank()) {
+                        PreparedStatement ins = conn.prepareStatement(
+                            "INSERT INTO Meeting_Schedule (group_id, meeting_day, start_time, end_time, location, meeting_type) " +
+                            "VALUES (?, ?, ?, ?, ?, ?)");
+                        ins.setInt(1, groupId);
+                        ins.setString(2, mDay);
+                        ins.setTime(3, java.sql.Time.valueOf(mSt + ":00"));
+                        ins.setTime(4, java.sql.Time.valueOf(mEt + ":00"));
+                        ins.setString(5, (mLoc != null && !mLoc.isBlank()) ? mLoc : null);
+                        ins.setString(6, mType);
+                        ins.executeUpdate();
+                        ins.close();
+                        postSuccess = "Schedule added.";
+                    }
+                }
+                chkRs.close(); chk.close();
+
+            } else if ("deleteSchedule".equals(action)) {
+                String meetingIdParam = request.getParameter("meetingId");
+                PreparedStatement chk = conn.prepareStatement(
+                    "SELECT leader_id FROM Study_Group WHERE group_id = ?");
+                chk.setInt(1, groupId);
+                ResultSet chkRs = chk.executeQuery();
+                if (chkRs.next() && chkRs.getInt("leader_id") == currentUserId
+                        && meetingIdParam != null && !meetingIdParam.isBlank()) {
+                    PreparedStatement del = conn.prepareStatement(
+                        "DELETE FROM Meeting_Schedule WHERE meeting_id = ? AND group_id = ?");
+                    del.setInt(1, Integer.parseInt(meetingIdParam));
+                    del.setInt(2, groupId);
+                    del.executeUpdate();
+                    del.close();
+                    postSuccess = "Schedule removed.";
+                }
+                chkRs.close(); chk.close();
             }
         } catch (Exception e) {
             postError = "Error: " + e.getMessage();
@@ -170,7 +217,7 @@
 
         // Meeting schedules
         ps = conn.prepareStatement(
-            "SELECT meeting_day, start_time, end_time, location, meeting_type " +
+            "SELECT meeting_id, meeting_day, start_time, end_time, location, meeting_type " +
             "FROM Meeting_Schedule WHERE group_id = ? " +
             "ORDER BY FIELD(meeting_day,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')");
         ps.setInt(1, groupId);
@@ -184,7 +231,8 @@
                 rs.getString("meeting_day"),
                 st, et,
                 rs.getString("location") != null ? rs.getString("location") : "",
-                rs.getString("meeting_type") != null ? rs.getString("meeting_type") : ""
+                rs.getString("meeting_type") != null ? rs.getString("meeting_type") : "",
+                String.valueOf(rs.getInt("meeting_id"))
             });
         }
         rs.close(); ps.close();
@@ -467,13 +515,8 @@
                     </a>
                 </div>
             <% } else if (isMember) { %>
-                <div style="margin-top:1.1rem;display:flex;align-items:center;gap:0.75rem;">
+                <div style="margin-top:1.1rem;">
                     <span class="gd-pill gd-pill-green">✓ You're a member</span>
-                    <a href="leaveGroup.jsp?groupId=<%= groupId %>"
-                       class="sm-btn sm-btn-outline"
-                       style="font-size:0.8rem;padding:0.2rem 0.65rem;color:#dc2626;border-color:#dc2626;">
-                        Leave group
-                    </a>
                 </div>
             <% } else { %>
                 <div style="margin-top:1.1rem;">
@@ -636,22 +679,87 @@
             <% } else {
                 for (String[] sch : schedules) {
             %>
-                <div class="gd-schedule-row">
+                <div class="gd-schedule-row" style="display:flex;align-items:center;justify-content:space-between;">
                     <div>
                         <div class="gd-day"><%= sch[0] %></div>
                         <div class="gd-time"><%= sch[1] %> – <%= sch[2] %></div>
                     </div>
-                    <div style="text-align:right;">
-                        <% if (!sch[3].isEmpty()) { %>
-                            <div style="font-size:0.8rem;color:var(--sm-text-muted);">📍 <%= sch[3] %></div>
-                        <% } %>
-                        <% if (!sch[4].isEmpty()) { %>
-                            <span class="gd-pill gd-pill-blue" style="font-size:0.7rem;margin-top:0.2rem;"><%= sch[4] %></span>
+                    <div style="text-align:right;display:flex;align-items:center;gap:0.5rem;">
+                        <div>
+                            <% if (!sch[3].isEmpty()) { %>
+                                <div style="font-size:0.8rem;color:var(--sm-text-muted);">📍 <%= sch[3] %></div>
+                            <% } %>
+                            <% if (!sch[4].isEmpty()) { %>
+                                <span class="gd-pill gd-pill-blue" style="font-size:0.7rem;margin-top:0.2rem;"><%= sch[4] %></span>
+                            <% } %>
+                        </div>
+                        <% if (currentUserId == leaderId) { %>
+                            <form method="post" action="groupDetail.jsp?groupId=<%= groupId %>"
+                                  style="margin:0;"
+                                  onsubmit="return confirm('Remove this schedule?');">
+                                <input type="hidden" name="action" value="deleteSchedule">
+                                <input type="hidden" name="meetingId" value="<%= sch[5] %>">
+                                <button type="submit"
+                                        style="background:none;border:1px solid #dc2626;color:#dc2626;
+                                               border-radius:6px;padding:0.2rem 0.5rem;font-size:0.75rem;
+                                               cursor:pointer;">
+                                    Remove
+                                </button>
+                            </form>
                         <% } %>
                     </div>
                 </div>
             <%  }
             } %>
+
+            <% if (currentUserId == leaderId) { %>
+                <div style="margin-top:1rem;border-top:1px solid var(--sm-border);padding-top:1rem;">
+                    <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;color:var(--sm-text-muted);">ADD SCHEDULE</div>
+                    <form method="post" action="groupDetail.jsp?groupId=<%= groupId %>"
+                          style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;">
+                        <input type="hidden" name="action" value="addSchedule">
+                        <div class="sm-field-group" style="margin:0;min-width:110px;">
+                            <label style="font-size:0.75rem;">Day</label>
+                            <select name="meetingDay" class="sm-select" style="font-size:0.85rem;padding:0.3rem 0.5rem;">
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                                <option>Saturday</option>
+                                <option>Sunday</option>
+                            </select>
+                        </div>
+                        <div class="sm-field-group" style="margin:0;min-width:100px;">
+                            <label style="font-size:0.75rem;">Start</label>
+                            <input type="time" name="startTime" class="sm-input"
+                                   style="font-size:0.85rem;padding:0.3rem 0.5rem;" required>
+                        </div>
+                        <div class="sm-field-group" style="margin:0;min-width:100px;">
+                            <label style="font-size:0.75rem;">End</label>
+                            <input type="time" name="endTime" class="sm-input"
+                                   style="font-size:0.85rem;padding:0.3rem 0.5rem;" required>
+                        </div>
+                        <div class="sm-field-group" style="margin:0;min-width:100px;">
+                            <label style="font-size:0.75rem;">Type</label>
+                            <select name="meetingType" class="sm-select" style="font-size:0.85rem;padding:0.3rem 0.5rem;">
+                                <option value="Online">Online</option>
+                                <option value="In-Person">In-Person</option>
+                            </select>
+                        </div>
+                        <div class="sm-field-group" style="margin:0;min-width:120px;">
+                            <label style="font-size:0.75rem;">Location (optional)</label>
+                            <input type="text" name="meetingLocation" class="sm-input"
+                                   style="font-size:0.85rem;padding:0.3rem 0.5rem;"
+                                   placeholder="e.g. Clark 201">
+                        </div>
+                        <button type="submit" class="sm-btn sm-btn-primary"
+                                style="font-size:0.85rem;padding:0.35rem 0.8rem;align-self:flex-end;">
+                            Add
+                        </button>
+                    </form>
+                </div>
+            <% } %>
         </div>
 
       </div><!-- end right column -->
