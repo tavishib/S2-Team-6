@@ -42,8 +42,7 @@
                     conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
                     ps = conn.prepareStatement(
-                        "SELECT u.user_id, u.name, u.email, u.password_hash, u.is_banned, s.major, " +
-                        "CASE WHEN a.user_id IS NOT NULL THEN 'Admin' ELSE 'Student' END AS role " +
+                        "SELECT u.user_id, u.name, u.email, u.password_hash, u.is_banned, s.major, a.user_id AS admin_id " +
                         "FROM User u " +
                         "LEFT JOIN Student s ON u.user_id = s.user_id " +
                         "LEFT JOIN Administrator a ON u.user_id = a.user_id " +
@@ -65,9 +64,9 @@
                         sess.setAttribute("userName",  rs.getString("name"));
                         sess.setAttribute("userEmail", rs.getString("email"));
 
-                        String role = rs.getString("role");
-                        sess.setAttribute("role", role);
-                        if ("Student".equals(role)) {
+                        boolean isAdmin = rs.getObject("admin_id") != null;
+                        sess.setAttribute("role", isAdmin ? "Admin" : "Student");
+                        if (!isAdmin) {
                             sess.setAttribute("major", rs.getString("major"));
                         }
                         response.sendRedirect("dashboard.jsp");

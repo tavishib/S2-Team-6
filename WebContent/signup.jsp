@@ -41,6 +41,7 @@
             if (passwordHash == null) {
                 error = "Server error, please try again.";
             } else {
+            	/* Database Conneciton  */
                 Connection conn = null;
                 PreparedStatement ps = null;
                 ResultSet rs = null;
