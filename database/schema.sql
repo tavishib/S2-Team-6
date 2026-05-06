@@ -6,7 +6,8 @@ CREATE TABLE User (
     name VARCHAR(100),
     email VARCHAR(100) UNIQUE,
     password_hash VARCHAR(255),
-    is_banned BOOLEAN DEFAULT FALSE
+    is_banned BOOLEAN DEFAULT FALSE,
+    is_deleted BOOLEAN DEFAULT FALSE
 );
 --Create table to store Student information, linked to User table
 CREATE TABLE Student (
