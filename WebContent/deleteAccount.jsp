@@ -17,73 +17,27 @@
 
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         Connection conn = null;
+        PreparedStatement ps = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjs u");
-            conn.setAutoCommit(false);
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
-            // Delete replies on messages in groups this user leads
-            PreparedStatement ps = conn.prepareStatement(
-                "DELETE FROM Reply WHERE message_id IN " +
-                "(SELECT message_id FROM Message WHERE group_id IN " +
-                "(SELECT group_id FROM Study_Group WHERE leader_id = ?))"
+            ps = conn.prepareStatement(
+                "UPDATE User SET is_deleted = TRUE, name = 'Deleted User', email = NULL, password_hash = NULL " +
+                "WHERE user_id = ?"
             );
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete group tags for groups this user leads
-            ps = conn.prepareStatement("DELETE FROM Group_Tag WHERE group_id IN (SELECT group_id FROM Study_Group WHERE leader_id = ?)");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete meeting schedules for groups this user leads
-            ps = conn.prepareStatement("DELETE FROM Meeting_Schedule WHERE group_id IN (SELECT group_id FROM Study_Group WHERE leader_id = ?)");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete all messages in groups this user leads
-            ps = conn.prepareStatement("DELETE FROM Message WHERE group_id IN (SELECT group_id FROM Study_Group WHERE leader_id = ?)");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete all memberships in groups this user leads
-            ps = conn.prepareStatement("DELETE FROM Membership WHERE group_id IN (SELECT group_id FROM Study_Group WHERE leader_id = ?)");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete the groups themselves
-            ps = conn.prepareStatement("DELETE FROM Study_Group WHERE leader_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete this user's replies in other groups
-            ps = conn.prepareStatement("DELETE FROM Reply WHERE user_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete this user's messages in other groups
-            ps = conn.prepareStatement("DELETE FROM Message WHERE user_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete this user's memberships in other groups
-            ps = conn.prepareStatement("DELETE FROM Membership WHERE user_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete student or admin subtype row
-            ps = conn.prepareStatement("DELETE FROM Student WHERE user_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            ps = conn.prepareStatement("DELETE FROM Administrator WHERE user_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            // Delete user row
-            ps = conn.prepareStatement("DELETE FROM User WHERE user_id = ?");
-            ps.setInt(1, userId); ps.executeUpdate(); ps.close();
-
-            conn.commit();
+            ps.setInt(1, userId);
+            ps.executeUpdate();
 
             session.invalidate();
             response.sendRedirect("login.jsp?deleted=true");
             return;
 
         } catch (Exception e) {
-            if (conn != null) try { conn.rollback(); } catch (SQLException ignored) {}
             error = "Database error: " + e.getMessage();
         } finally {
-            if (conn != null) try { conn.setAutoCommit(true); conn.close(); } catch (SQLException ignored) {}
+            if (ps   != null) try { ps.close();   } catch (SQLException ignored) {}
+            if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
     }
 %>
