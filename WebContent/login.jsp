@@ -54,12 +54,12 @@
                     if (!rs.next()) {
                         error = "Invalid email or password.";
                     } else if (!rs.getString("password_hash").equals(passwordHash)) {
-                        error = "Invalid email or password.";
+                        error = "Invalid password.";
                     } else if (rs.getBoolean("is_deleted")) {
                         error = "Invalid email or password.";
                     } else if (rs.getBoolean("is_banned")) {
                         error = "Your account has been banned. Please contact support.";
-                    } else {
+                    } else { /* new session is created */
                         HttpSession sess = request.getSession(true);
                         sess.setMaxInactiveInterval(15 * 60);
                         sess.setAttribute("userId",    rs.getInt("user_id"));
@@ -68,9 +68,9 @@
 
                         boolean isAdmin = rs.getObject("admin_id") != null;
                         sess.setAttribute("role", isAdmin ? "Admin" : "Student");
-                        if (!isAdmin) {
+/*                         if (!isAdmin) {
                             sess.setAttribute("major", rs.getString("major"));
-                        }
+                        } */
                         response.sendRedirect("dashboard.jsp");
                         return;
                     }
