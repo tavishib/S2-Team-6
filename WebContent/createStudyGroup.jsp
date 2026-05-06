@@ -44,6 +44,7 @@
                     "root",
                     "CS157A@sjsu")) {
 
+                //if any part of the group creation process fails, we want to roll back the entire transaction to prevent partial data (like a group without a leader or tags without a group)
                 conn.setAutoCommit(false);
 
                 try {

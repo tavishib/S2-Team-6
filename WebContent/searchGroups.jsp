@@ -38,7 +38,8 @@
             sql.append("JOIN Group_Tag gt ON sg.group_id = gt.group_id ");
             sql.append("JOIN Tag t ON gt.tag_id = t.tag_id ");
         }
-
+        
+        // Base condition to simplify appending AND clauses
         sql.append("WHERE 1=1 ");
 
         List<Object> params = new ArrayList<>();
@@ -83,6 +84,7 @@
 
         ResultSet rs = ps.executeQuery();
 
+        //checks if the user is already a member of the group, to prevent showing join button for those groups
         while (rs.next()) {
             Map<String, String> row = new HashMap<>();
             int maxCap = rs.getInt("max_capacity");

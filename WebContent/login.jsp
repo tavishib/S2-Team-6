@@ -55,7 +55,7 @@
                         error = "Invalid email or password.";
                     } else if (!rs.getString("password_hash").equals(passwordHash)) {
                         error = "Invalid email or password.";
-                    } else if (rs.getBoolean("is_banned")) {
+                    } else if (rs.getBoolean("is_banned")) { //check if the user is banned, if so dont allow them to log in and show an error message
                         error = "Your account has been banned. Please contact support.";
                     } else {
                         HttpSession sess = request.getSession(true);

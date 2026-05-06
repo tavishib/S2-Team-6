@@ -11,6 +11,7 @@
         return;
     }
 
+    //check if user is admin, if not redirect to dashboard
     if (!"Admin".equals(session.getAttribute("role"))) {
         response.sendRedirect("dashboard.jsp");
         return;
@@ -80,7 +81,7 @@
                                 "SELECT u.user_id, u.name, u.email, u.is_banned, " +
                                 "CASE WHEN a.user_id IS NOT NULL THEN 'Admin' ELSE 'Student' END AS role " +
                                 "FROM User u " +
-                                "LEFT JOIN Administrator a ON u.user_id = a.user_id " +
+                                "LEFT JOIN Administrator a ON u.user_id = a.user_id " + //allows admins to see every user in the system while identifying who else has admin priviledges
                                 "ORDER BY role, u.user_id"
                             );
 

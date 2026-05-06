@@ -19,6 +19,7 @@
     int targetId = Integer.parseInt(userIdParam);
     int currentAdminId = (Integer) session.getAttribute("userId");
 
+    // Prevent admin from banning themselves or other admins
     if (targetId == currentAdminId) {
         response.sendRedirect("adminUsers.jsp?error=self");
         return;
@@ -44,6 +45,7 @@
             rs.close();
             check.close();
 
+            //flip to true to ban the user, dont delete the user to preserve data integrity and allow for unbanning in the future
             PreparedStatement ps = conn.prepareStatement(
                 "UPDATE User SET is_banned = TRUE WHERE user_id = ?"
             );
