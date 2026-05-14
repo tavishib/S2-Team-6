@@ -10,6 +10,10 @@
         response.sendRedirect("login.jsp");
         return;
     }
+    if (Boolean.TRUE.equals(session.getAttribute("mustChangePassword"))) {
+        response.sendRedirect("resetPassword.jsp");
+        return;
+    }
     String userName = (String) session.getAttribute("userName");
 %>
 <!DOCTYPE html>
@@ -56,14 +60,48 @@
                 </button>
                 <div id="settingsDropdown"
                      style="display:none;position:absolute;right:0;top:calc(100% + 6px);
-                            min-width:180px;background:#fff;border:1px solid var(--sm-border,#e5e7eb);
-                            border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);
-                            overflow:hidden;z-index:100;">
-                    <a href="deleteAccount.jsp"
-                       style="display:block;padding:0.65rem 1rem;font-size:0.875rem;
-                              color:#dc2626;text-decoration:none;font-weight:500;"
-                       onmouseover="this.style.background='#fff1f1'"
+                            min-width:210px;background:#fff;border:1px solid var(--sm-border,#e5e7eb);
+                            border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.08);
+                            overflow:hidden;z-index:100;padding:0.35rem 0;">
+                    <div style="padding:0.4rem 1rem 0.3rem;font-size:0.7rem;letter-spacing:0.06em;
+                                text-transform:uppercase;color:var(--sm-text-muted);font-weight:600;
+                                text-align:center;">
+                        Account
+                    </div>
+                    <a href="resetPassword.jsp"
+                       style="display:flex;align-items:center;justify-content:center;gap:0.6rem;
+                              padding:0.55rem 1rem;font-size:0.875rem;
+                              color:var(--sm-text);text-decoration:none;font-weight:500;
+                              transition:background 0.12s;"
+                       onmouseover="this.style.background='#f3f4f6'"
                        onmouseout="this.style.background='transparent'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             style="flex-shrink:0;color:var(--sm-text-muted);">
+                            <path d="m21 2-9.6 9.6"/>
+                            <circle cx="7.5" cy="15.5" r="5.5"/>
+                            <path d="m21 2-2 2"/>
+                            <path d="m15 7 3 3"/>
+                        </svg>
+                        Change password
+                    </a>
+                    <div style="height:1px;background:var(--sm-border,#e5e7eb);margin:0.35rem 0;"></div>
+                    <a href="deleteAccount.jsp"
+                       style="display:flex;align-items:center;justify-content:center;gap:0.6rem;
+                              padding:0.55rem 1rem;font-size:0.875rem;
+                              color:#dc2626;text-decoration:none;font-weight:500;
+                              transition:background 0.12s;"
+                       onmouseover="this.style.background='#fef2f2'"
+                       onmouseout="this.style.background='transparent'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             style="flex-shrink:0;">
+                            <path d="M3 6h18"/>
+                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            <path d="M19 6 18 20a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        </svg>
                         Delete account
                     </a>
                 </div>

@@ -42,7 +42,7 @@
                     conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
                     ps = conn.prepareStatement(
-                        "SELECT u.user_id, u.name, u.email, u.password_hash, u.is_banned, u.is_deleted, s.major, a.user_id AS admin_id " +
+                        "SELECT u.user_id, u.name, u.email, u.password_hash, u.is_banned, u.is_deleted, u.must_change_password, s.major, a.user_id AS admin_id " +
                         "FROM User u " +
                         "LEFT JOIN Student s ON u.user_id = s.user_id " +
                         "LEFT JOIN Administrator a ON u.user_id = a.user_id " +
@@ -71,6 +71,12 @@
 /*                         if (!isAdmin) {
                             sess.setAttribute("major", rs.getString("major"));
                         } */
+
+                        if (rs.getBoolean("must_change_password")) {
+                            sess.setAttribute("mustChangePassword", Boolean.TRUE);
+                            response.sendRedirect("resetPassword.jsp");
+                            return;
+                        }
                         response.sendRedirect("dashboard.jsp");
                         return;
                     }
@@ -159,7 +165,11 @@
 
             </form>
 
-            <p class="sm-card-note" style="text-align:center;margin-top:1rem;">
+            <p class="sm-card-note" style="text-align:center;margin-top:1rem;margin-bottom:0.3rem;">
+                <a href="forgotPassword.jsp" style="color:var(--sm-primary);">Forgot your password?</a>
+            </p>
+
+            <p class="sm-card-note" style="text-align:center;margin-top:0.3rem;">
                 Don't have an account? <a href="signup.jsp" style="color:var(--sm-primary);">Sign up</a>
             </p>
 
