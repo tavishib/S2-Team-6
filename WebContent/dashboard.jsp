@@ -94,9 +94,12 @@
 				</div>
 
                 <% if ("Admin".equals(session.getAttribute("role"))) { %>
-                    <div style="margin-top:0.5rem;">
+                    <div style="margin-top:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
                         <a href="adminUsers.jsp" class="sm-btn sm-btn-outline">
-                            Admin Panel
+                            Manage Users
+                        </a>
+                        <a href="adminGroups.jsp" class="sm-btn sm-btn-outline">
+                            Manage Groups
                         </a>
                     </div>
 <%              } %>

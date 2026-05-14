@@ -9,10 +9,15 @@
     }
 
     int currentUserId = (Integer) session.getAttribute("userId");
+    boolean isAdmin   = "Admin".equals(session.getAttribute("role"));
+    boolean fromAdmin = "admin".equals(request.getParameter("from"));
+
+    // Admin-context deletes return to adminGroups.jsp; leader deletes return to dashboard.
+    String successUrl = (isAdmin && fromAdmin) ? "adminGroups.jsp" : "dashboard.jsp";
 
     String groupIdParam = request.getParameter("groupId");
     if (groupIdParam == null || groupIdParam.isEmpty()) {
-        response.sendRedirect("dashboard.jsp");
+        response.sendRedirect(successUrl);
         return;
     }
     int groupId = Integer.parseInt(groupIdParam);
@@ -23,15 +28,15 @@
         conn = DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
-        // Verify the current user is actually the leader
+        // Verify the current user is either the group's leader or an admin.
         PreparedStatement check = conn.prepareStatement(
             "SELECT leader_id FROM Study_Group WHERE group_id = ?");
         check.setInt(1, groupId);
         ResultSet rs = check.executeQuery();
 
-        if (!rs.next() || rs.getInt("leader_id") != currentUserId) {
+        if (!rs.next() || (!isAdmin && rs.getInt("leader_id") != currentUserId)) {
             rs.close(); check.close(); conn.close();
-            response.sendRedirect("dashboard.jsp");
+            response.sendRedirect(successUrl);
             return;
         }
         rs.close(); check.close();
@@ -73,11 +78,10 @@
 
         conn.close();
 
-        // Redirect to dashboard with success message
-        response.sendRedirect("dashboard.jsp?deleted=1");
+        response.sendRedirect(successUrl + "?deleted=" + groupId);
 
     } catch (Exception e) {
         if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
-        response.sendRedirect("dashboard.jsp?deleteError=1");
+        response.sendRedirect(successUrl + "?error=db");
     }
 %>

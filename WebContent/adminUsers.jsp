@@ -40,6 +40,7 @@
             <span style="color:var(--sm-text-muted);font-size:0.9rem;padding:0.35rem 0.7rem;">
                 <%= userName %>
             </span>
+            <a href="adminGroups.jsp" class="sm-btn sm-btn-outline">Manage Groups</a>
             <a href="dashboard.jsp" class="sm-btn sm-btn-outline">Dashboard</a>
             <a href="logout.jsp" class="sm-btn sm-btn-outline">Log out</a>
         </nav>
