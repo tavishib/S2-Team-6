@@ -11,6 +11,11 @@
         return;
     }
 
+    if (!"Admin".equals(session.getAttribute("role"))) {
+        response.sendRedirect("dashboard.jsp");
+        return;
+    }
+
     String error = null;
 
     if ("POST".equalsIgnoreCase(request.getMethod())) {

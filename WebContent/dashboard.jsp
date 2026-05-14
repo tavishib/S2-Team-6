@@ -87,7 +87,9 @@
                 <div class="sm-dashboard-actions">
                     <a href="searchGroups.jsp" class="sm-btn sm-btn-primary">Find a study group</a>
                     <a href="createStudyGroup.jsp" class="sm-btn sm-btn-secondary">Create a study group</a>
+					<% if ("Admin".equals(session.getAttribute("role"))) { %>
 					<a href="createCourse.jsp" class="sm-btn sm-btn-secondary">Create a course</a>
+					<% } %>
 					<a href="listCourses.jsp" class="sm-btn sm-btn-secondary">List courses</a>
 				</div>
 
