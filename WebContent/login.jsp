@@ -42,7 +42,7 @@
                     conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
                     ps = conn.prepareStatement(
-                        "SELECT u.user_id, u.name, u.email, u.password_hash, u.is_banned, u.is_deleted, u.must_change_password, s.major, a.user_id AS admin_id " +
+                        "SELECT u.user_id, u.name, u.email, u.password_hash, u.is_banned, u.must_change_password, s.major, a.user_id AS admin_id " +
                         "FROM User u " +
                         "LEFT JOIN Student s ON u.user_id = s.user_id " +
                         "LEFT JOIN Administrator a ON u.user_id = a.user_id " +
@@ -55,8 +55,6 @@
                         error = "Invalid email or password.";
                     } else if (!rs.getString("password_hash").equals(passwordHash)) {
                         error = "Invalid password.";
-                    } else if (rs.getBoolean("is_deleted")) {
-                        error = "Invalid email or password.";
                     } else if (rs.getBoolean("is_banned")) { //check if the user is banned, if so dont allow them to log in and show an error message
                         error = "Your account has been banned. Please contact support.";
                     } else { /* new session is created */

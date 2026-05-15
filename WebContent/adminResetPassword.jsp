@@ -70,19 +70,15 @@
         conn = DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
-        // Verify the target exists, is not deleted, and is not an admin.
+        // Verify the target exists and is not an admin.
         ps = conn.prepareStatement(
-            "SELECT u.name, u.is_deleted, a.user_id AS admin_id " +
+            "SELECT u.name, a.user_id AS admin_id " +
             "FROM User u LEFT JOIN Administrator a ON u.user_id = a.user_id " +
             "WHERE u.user_id = ?");
         ps.setInt(1, targetUserId);
         rs = ps.executeQuery();
         if (!rs.next()) {
             response.sendRedirect("adminUsers.jsp?error=notFound");
-            return;
-        }
-        if (rs.getBoolean("is_deleted")) {
-            response.sendRedirect("adminUsers.jsp?error=deletedUser");
             return;
         }
         if (rs.getObject("admin_id") != null) {
