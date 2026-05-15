@@ -14,29 +14,66 @@
     String userName = (String) session.getAttribute("userName");
     int userId = (Integer) session.getAttribute("userId");
     String error = null;
+    java.util.List<int[]> ledGroups = new java.util.ArrayList<>(); // [group_id]
+    java.util.List<String> ledGroupNames = new java.util.ArrayList<>();
 
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         Connection conn = null;
-        PreparedStatement ps = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/StudyMatch", "root", "CS157A@sjsu");
 
-            ps = conn.prepareStatement(
-                "UPDATE User SET is_deleted = TRUE, name = 'Deleted User', email = NULL, password_hash = NULL " +
-                "WHERE user_id = ?"
-            );
-            ps.setInt(1, userId);
-            ps.executeUpdate();
+            // Pre-check: block deletion if the user leads any study group.
+            PreparedStatement leadCheck = conn.prepareStatement(
+                "SELECT group_id, group_name FROM Study_Group WHERE leader_id = ?");
+            leadCheck.setInt(1, userId);
+            ResultSet leadRs = leadCheck.executeQuery();
+            while (leadRs.next()) {
+                ledGroups.add(new int[]{ leadRs.getInt("group_id") });
+                ledGroupNames.add(leadRs.getString("group_name"));
+            }
+            leadRs.close();
+            leadCheck.close();
 
-            session.invalidate();
-            response.sendRedirect("login.jsp?deleted=true");
-            return;
+            if (!ledGroups.isEmpty()) {
+                error = "You still lead study group(s). Delete or transfer leadership before deleting your account.";
+            } else {
+                conn.setAutoCommit(false);
+                try {
+                    // Preserve discussion: detach this user from their messages and replies.
+                    PreparedStatement ps;
 
+                    ps = conn.prepareStatement("UPDATE Reply SET user_id = NULL WHERE user_id = ?");
+                    ps.setInt(1, userId); ps.executeUpdate(); ps.close();
+
+                    ps = conn.prepareStatement("UPDATE Message SET user_id = NULL WHERE user_id = ?");
+                    ps.setInt(1, userId); ps.executeUpdate(); ps.close();
+
+                    ps = conn.prepareStatement("DELETE FROM Membership WHERE user_id = ?");
+                    ps.setInt(1, userId); ps.executeUpdate(); ps.close();
+
+                    ps = conn.prepareStatement("DELETE FROM Student WHERE user_id = ?");
+                    ps.setInt(1, userId); ps.executeUpdate(); ps.close();
+
+                    ps = conn.prepareStatement("DELETE FROM Administrator WHERE user_id = ?");
+                    ps.setInt(1, userId); ps.executeUpdate(); ps.close();
+
+                    ps = conn.prepareStatement("DELETE FROM User WHERE user_id = ?");
+                    ps.setInt(1, userId); ps.executeUpdate(); ps.close();
+
+                    conn.commit();
+                } catch (SQLException txEx) {
+                    conn.rollback();
+                    throw txEx;
+                }
+
+                session.invalidate();
+                response.sendRedirect("login.jsp?deleted=true");
+                return;
+            }
         } catch (Exception e) {
             error = "Database error: " + e.getMessage();
         } finally {
-            if (ps   != null) try { ps.close();   } catch (SQLException ignored) {}
             if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
     }
@@ -72,16 +109,34 @@
 
             <div class="sm-small-label" style="color:#dc2626;">Danger zone</div>
             <h2 style="margin:0 0 0.4rem;">Delete your account</h2>
-            <p>This action is <strong>permanent</strong> and cannot be undone. All of your data will be removed, including:</p>
+            <p>This action is <strong>permanent</strong> and cannot be undone. When you delete your account:</p>
 
             <ul style="font-size:0.9rem;color:var(--sm-text-muted);margin:0 0 1.25rem 1.2rem;line-height:1.8;">
-                <li>Your profile and account credentials</li>
-                <li>Study groups you lead (and their memberships, messages, and schedules)</li>
-                <li>Your memberships in other groups</li>
-                <li>Messages and replies you have posted</li>
+                <li>Your profile and account credentials are removed</li>
+                <li>Your memberships in study groups are removed</li>
+                <li>Your name is removed from messages and replies you have posted (the posts themselves stay, shown as "Deleted user")</li>
             </ul>
 
-            <% if (error != null) { %>
+            <p style="font-size:0.85rem;color:var(--sm-text-muted);margin:0 0 1rem;">
+                If you lead any study groups, you must delete or transfer leadership of them first.
+            </p>
+
+            <% if (!ledGroups.isEmpty()) { %>
+                <div style="background:#fee2e2;color:#991b1b;border-radius:8px;padding:0.7rem 0.9rem;font-size:0.875rem;margin-bottom:0.8rem;">
+                    <strong>You still lead the following group(s):</strong>
+                    <ul style="margin:0.4rem 0 0 1.1rem;padding:0;">
+                        <% for (int i = 0; i < ledGroups.size(); i++) {
+                               int gid = ledGroups.get(i)[0];
+                               String gname = ledGroupNames.get(i); %>
+                            <li>
+                                <a href="groupDetail.jsp?groupId=<%= gid %>" style="color:#991b1b;text-decoration:underline;">
+                                    <%= gname %>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+            <% } else if (error != null) { %>
                 <div style="background:#fee2e2;color:#991b1b;border-radius:8px;padding:0.6rem 0.8rem;font-size:0.875rem;margin-bottom:0.8rem;">
                     <%= error %>
                 </div>

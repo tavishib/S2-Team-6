@@ -250,15 +250,17 @@
         ps = conn.prepareStatement(
             "SELECT msg.message_id, msg.message_text, msg.posted_at, u.name AS author " +
             "FROM Message msg " +
-            "JOIN User u ON msg.user_id = u.user_id " +
+            "LEFT JOIN User u ON msg.user_id = u.user_id " +
             "WHERE msg.group_id = ? ORDER BY msg.posted_at ASC");
         ps.setInt(1, groupId);
         rs = ps.executeQuery();
         while (rs.next()) {
             int mid = rs.getInt("message_id");
+            String author = rs.getString("author");
+            if (author == null) author = "Deleted user";
             messages.add(new String[]{
                 String.valueOf(mid),
-                rs.getString("author"),
+                author,
                 rs.getString("message_text"),
                 rs.getTimestamp("posted_at") != null
                     ? dtFmt.format(rs.getTimestamp("posted_at")) : ""
@@ -272,7 +274,7 @@
             ps = conn.prepareStatement(
                 "SELECT r.message_id, r.reply_text, r.posted_at, u.name AS author " +
                 "FROM Reply r " +
-                "JOIN User u ON r.user_id = u.user_id " +
+                "LEFT JOIN User u ON r.user_id = u.user_id " +
                 "WHERE r.message_id IN " +
                 "(SELECT message_id FROM Message WHERE group_id = ?) " +
                 "ORDER BY r.posted_at ASC");
@@ -281,8 +283,10 @@
             while (rs.next()) {
                 int mid = rs.getInt("message_id");
                 if (replies.containsKey(mid)) {
+                    String author = rs.getString("author");
+                    if (author == null) author = "Deleted user";
                     replies.get(mid).add(new String[]{
-                        rs.getString("author"),
+                        author,
                         rs.getString("reply_text"),
                         rs.getTimestamp("posted_at") != null
                             ? dtFmt.format(rs.getTimestamp("posted_at")) : ""
